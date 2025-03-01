@@ -1,7 +1,10 @@
 from django.urls import path
-from .views import trigger_task, IndexView
+from .views import (
+    IndexView,
+    LoginView
+)
 
 urlpatterns = [
-    path('trigger/', trigger_task, name='trigger_task'),
     path('', IndexView.as_view(), name='index'),
+    path('login/', LoginView.as_view(), name='login'),
 ]
