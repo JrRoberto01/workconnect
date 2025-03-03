@@ -1,0 +1,62 @@
+{% load static %}
+
+<div class="post">
+    <div class="header-post">
+        <div class="profile">
+            <div class="profile-image">
+                <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+            </div>
+            <div class="profile-user-title">
+                <span><b><a href="#">{{ user.first_name}} {{ user.last_name}}</a></b> <i class="fa-solid fa-right-long"></i> <a href="#"><span class="post-group-details">Grupo Projeto WorkConnect</span></a></span>
+                <span class="post-role">Project Management</span>
+            </div>
+        </div>
+        <div class="header-options">
+            <div id="more-options">
+                <i class="fa-solid fa-ellipsis"></i>
+            </div>
+            <span><b>5</b> h</span>
+        </div>
+    </div>
+    <div class="content-post">
+        <h4>Adição Protótipo para o Front</h4>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not
+            only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+    </div>
+    <div class="details-post">
+        <div id="social-icons">
+            <div id="likes">
+                <i id="heart-like" class="fa-regular fa-heart"></i>
+                <span><b>5</b></span>
+            </div>
+            <div id="comments">
+                <i id="comment-icon" class="fa-regular fa-message"></i>
+                <span><b>7</b></span>
+            </div>
+        </div>
+        <div id="share">
+            <i class="fa-solid fa-share"></i>
+        </div>
+    </div>
+    <hr>
+    <div class="comment-post">
+        <div class="profile-image">
+            <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+        </div>
+        <form>
+            <input type="text" placeholder="Fazer Comentário">
+            <div class="extras">
+                <div id="file-toggle">
+                    <i class="fa-regular fa-file"></i>
+                </div>
+                <div id="emoji-toggle">
+                    <i class="fa-solid fa-face-smile"></i>
+                </div>
+                <button type="submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
