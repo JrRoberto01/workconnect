@@ -1,9 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-class IndexView(TemplateView, LoginRequiredMixin):
+class IndexView(LoginRequiredMixin, TemplateView):
 
     def get(self, request):
-        print('Teste')
-        return render(request, 'index.html')
+        user = request.user
+        if user:
+            return render(request, 'index.html')
+        else:
+            return redirect('login')
