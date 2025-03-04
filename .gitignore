@@ -33,11 +33,6 @@ logs/
 tmp/
 *.pid
 
-# Arquivos de mídia e uploads (se armazenados localmente)
-media/
-staticfiles/
-static/
-
 # Configuração do Django
 .env
 *.env
@@ -45,10 +40,10 @@ config/settings/local.py
 config/settings/.local/
 
 # Arquivos do Celery e cache
-celerybeat-schedule
-celerybeat.pid
+#celerybeat-schedule
+#celerybeat.pid
 
 # Migrations criadas automaticamente
-*/migrations/*.pyc
-*/migrations/*.py
-!*/migrations/__init__.py
+#*/migrations/*.pyc
+#*/migrations/*.py
+#!*/migrations/__init__.py
