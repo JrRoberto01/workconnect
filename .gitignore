@@ -1,0 +1,54 @@
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Diretório do ambiente virtual
+venv/
+env/
+.virtualenv/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Configurações específicas do IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Arquivos de dependências
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# Arquivos de banco de dados locais
+*.sqlite3
+db.sqlite3
+
+# Arquivos de logs e temporários
+*.log
+logs/
+tmp/
+*.pid
+
+# Arquivos de mídia e uploads (se armazenados localmente)
+media/
+staticfiles/
+static/
+
+# Configuração do Django
+.env
+*.env
+config/settings/local.py
+config/settings/.local/
+
+# Arquivos do Celery e cache
+celerybeat-schedule
+celerybeat.pid
+
+# Migrations criadas automaticamente
+*/migrations/*.pyc
+*/migrations/*.py
+!*/migrations/__init__.py

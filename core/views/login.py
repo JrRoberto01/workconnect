@@ -1,10 +1,13 @@
-from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
+from django.views.generic import TemplateView
+from django.shortcuts import render, redirect
 
-class LoginView(LoginView):
+class LoginTemplateView(TemplateView):
     template_name = 'login.html'
-    redirect_authenticated_user = True
-    success_url = reverse_lazy('index')
 
-    def get_success_url(self):
-        return self.success_url
+    def get(self, request, *args, **kwargs):
+        # Verificar se o usuário já está autenticado com JWT
+        if request.user.is_authenticated:
+            return redirect('index')
+
+        # Se não estiver autenticado, exibe a tela de login
+        return super().get(request, *args, **kwargs)
