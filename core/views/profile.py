@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
-class IndexView(TemplateView):
-    template_name = "index.html"
+class ProfileView(TemplateView):
+    template_name = "profile.html"
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
