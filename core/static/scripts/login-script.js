@@ -1,4 +1,5 @@
 document.getElementById("login-form").addEventListener("submit", async function (event) {
+<<<<<<< HEAD
             event.preventDefault();
             let email = document.getElementById("email").value;
             let password = document.getElementById("password").value;
@@ -37,3 +38,22 @@ document.getElementById("login-form").addEventListener("submit", async function 
             }
             return cookieValue;
         }
+=======
+    event.preventDefault();
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    let response = await fetch("/api/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+    });
+
+    let data = await response.json();
+    if (response.ok) {
+        window.location.href = "/";  // Redireciona para a home após login
+    } else {
+        alert(data.error || "Erro no login");
+    }
+});
+>>>>>>> e09d17a6c6ec6a6c753edcaac26d90424efdbbaf
