@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from stdimage.models import StdImageField
+from django.utils.timezone import localtime, now
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -29,9 +31,9 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-
 class CustomUser(AbstractUser):
     email = models.EmailField('E-mail', unique=True)
+    perfil_img = StdImageField('profile_img', upload_to='profile_img', null=True, blank=True, variations={'thumbnail': {'width': 500,'height': 500, 'crop': True}})
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -40,15 +42,22 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
-    
 
 # Obtém o modelo CustomUser
 User = get_user_model()
 
+class Base(models.Model):
+    created_at = models.DateTimeField('Criado em', auto_now_add=True)
+    modified_at = models.DateTimeField('Modificado em', auto_now=True)
+    deleted_at = models.DateTimeField('Deletado em', blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
 # Modelo de Organização
-class Organizacao(models.Model):
+class Organizacao(Base):
     nome = models.CharField(max_length=100)
-    logo = models.ImageField(upload_to='logos/', null=True, blank=True)
+    logo = StdImageField('logo', upload_to='organization_logo_img', null=True, blank=True, variations={'thumbnail': {'width': 500,'height': 500, 'crop': True}})
     descricao = models.TextField()
     membros = models.ManyToManyField(User, related_name='membros_organizacao')
     eventos = models.ManyToManyField('Evento', related_name='eventos_organizacao')
@@ -58,18 +67,21 @@ class Organizacao(models.Model):
 
 
 # Modelo de Grupo
-class Grupo(models.Model):
+class Grupo(Base):
     nome = models.CharField(max_length=100)
     descricao = models.TextField()
+    admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='grupo_admins')
     membros = models.ManyToManyField(User, related_name='membros_grupo')
+    grupo_img = StdImageField('grupo_img', upload_to='grupo_img', null=True, blank=True, variations={'thumbnail': {'width': 500, 'height': 500, 'crop': True}})
+    capa_grupo_img = StdImageField('capa_grupo_img', upload_to='capa_grupo_img', null=True, blank=True, variations={'full': {'width': 1000, 'height': 500, 'crop': True}})
 
     def __str__(self):
         return self.nome
 
 
 # Modelo de Imagem (para associar imagens a posts)
-class Imagem(models.Model):
-    imagem = models.ImageField(upload_to='posts/')
+class Imagem(Base):
+    imagem = StdImageField('posts_img', upload_to='posts_img', null=True, blank=True)
     descricao = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
@@ -77,8 +89,9 @@ class Imagem(models.Model):
 
 
 # Modelo de Post
-class Post(models.Model):
+class Post(Base):
     descricao = models.CharField(max_length=255)
+    grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, related_name='grupo_posts')
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     conteudo = models.TextField()
     imagens = models.ManyToManyField(Imagem, related_name='imagens_post', blank=True)
@@ -88,7 +101,7 @@ class Post(models.Model):
 
 
 # Modelo de Evento
-class Evento(models.Model):
+class Evento(Base):
     nome = models.CharField(max_length=100)
     descricao = models.TextField()
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='eventos')
