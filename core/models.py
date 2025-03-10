@@ -61,6 +61,7 @@ class Organizacao(Base):
     descricao = models.TextField()
     membros = models.ManyToManyField(User, related_name='membros_organizacao')
     eventos = models.ManyToManyField('Evento', related_name='eventos_organizacao')
+    admin = models.ManyToManyField(User, related_name='admins_organizacao')
 
     def __str__(self):
         return self.nome

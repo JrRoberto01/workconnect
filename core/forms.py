@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser
+from .models import CustomUser, Organizacao, User
+from django import forms
 
 class CustomUserCreateForm(UserCreationForm):
 	class Meta:
@@ -19,3 +20,17 @@ class CustomUserChangeForm(UserChangeForm):
 	class Meta:
 		model = CustomUser #Definindo o modelo
 		fields = {'first_name', 'last_name'} #Devemos passar o que foi exatamente descrito no 'REQUIRED_FIELDS' presente no arquivo models do custom
+
+
+class OrganizacaoForm(forms.ModelForm):
+    class Meta:
+        model = Organizacao
+        fields = ['nome', 'logo']
+
+    def save(self, user, commit=True):
+        organizacao = super().save(commit=False)
+        if commit:
+            organizacao.save()
+            organizacao.membros.add(user)  # Adiciona o criador como membro
+            organizacao.admin.add(user)  # Adiciona o criador como admin
+        return organizacao
