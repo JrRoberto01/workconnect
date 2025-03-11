@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <section id="group-list">
+                        <h3>Listagem de Grupos</h3>
+                        {% for group in groups %}
+                        <div class="group">
+                            <div class="profile">
+                                <div class="profile-image">
+                                    <img src="{{ group.grupo_img.thumbnail.url }}" alt="Foto de perfil">
+                                </div>
+                                <div class="profile-user-title">
+                                    <span><b><a href="#">{{ group.nome }}</a></b></span>
+                                    {% if group.tipo == 'publico' %}
+                                        <span class="post-role"><i class="fa-solid fa-earth-americas"></i> {{ group.tipo }}</span>
+                                    {% else %}
+                                        <span class="post-role"><i class="fa-solid fa-lock"></i> {{ group.tipo }}</span>
+                                    {% endif %}    
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-ellipsis more-chat-options"></i>
+                        </div>
+                        {% endfor %}
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-box">
+        <div class="content">
+            <h3>Criar novo grupo</h3>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ add_form.as_p }}
+                <button type="submit">Criar Grupo</button>
+            </form>
+        </div>
+    </div>
+<!--End Main Container-->
+</div>
+{% endblock %}

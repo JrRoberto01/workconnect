@@ -18,7 +18,7 @@ body{
     color: var(--black);
     scroll-behavior: smooth;
 
-    & input{
+    & input, select, textarea{
         width: 100%;
         padding: 8px 15px;
         border: 1px solid var(--light-silver);
@@ -813,6 +813,82 @@ aside{
                     cursor: pointer;
                 }
             }
+        }
+    }
+}
+
+#group-list{
+    background-color: var(--white);
+    border-radius: 25px;
+    box-shadow: 0px 8px 27px -13px rgba(0,0,0,0.1);
+    padding: 30px 0;
+
+    & h3{
+        font-size: 1.3em;
+        font-weight: 400;
+        color: var(--gray);
+        margin: 0;
+        padding: 0px 30px 10px 30px;
+    }
+
+    & .group{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 10px 30px;
+        transition: .2s;
+
+        & .post-role{
+            text-transform: capitalize;
+        }
+
+        & .more-chat-options{
+            cursor: pointer;
+        }
+    }
+
+    & .group:hover{
+        background-color: var(--silver);
+    }
+}
+
+.modal-box{
+    width: 500px;
+    background-color: var(--white);
+    border-radius: 25px;
+    box-shadow: 0px 8px 27px -13px rgba(0,0,0,0.1);
+    padding: 30px 0;
+
+    & .content{
+        padding: 0 30px;
+    }
+    & form{
+        display: flex;
+        flex-direction: column;
+
+        & p{
+            display: flex;
+            flex-direction: column;
+
+            & label{
+                margin-bottom: 5px;
+            }
+        }
+        & textarea{
+            resize: none;
+        }
+        & button{
+            background-color: var(--light-blue);
+            font-weight: 500;
+            color: var(--white);
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 25px;
+            margin-top: 10px;
+            transition: .2s;
         }
     }
 }

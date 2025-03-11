@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Organizacao, User
+from .models import CustomUser, Organizacao, User, Grupo
 from django import forms
 
 class CustomUserCreateForm(UserCreationForm):
@@ -31,6 +31,32 @@ class OrganizacaoForm(forms.ModelForm):
         organizacao = super().save(commit=False)
         if commit:
             organizacao.save()
-            organizacao.membros.add(user)  # Adiciona o criador como membro
-            organizacao.admin.add(user)  # Adiciona o criador como admin
+            organizacao.membros.add(user)
+            organizacao.admin.add(user)
         return organizacao
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Grupo
+        fields = ['nome', 'descricao', 'membros', 'grupo_img', 'tipo']
+
+        labels = {
+            'nome': 'Nome do Grupo',
+            'descricao': 'Descrição',
+            'membros': 'Membros',
+            'grupo_img': 'Imagem do Grupo',
+            'tipo': 'Tipo de Grupo',
+        }
+
+        widgets = {
+            'descricao': forms.Textarea(attrs={'placeholder': 'Descreva o grupo', 'rows': 2}),
+        }
+
+    def save(self, user, commit=True):
+        grupo = super().save(commit=False)
+
+        if commit:
+            grupo.save()
+            grupo.membros.add(user)
+            grupo.admin.add(user)
+        return grupo

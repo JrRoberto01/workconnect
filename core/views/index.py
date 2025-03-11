@@ -14,7 +14,7 @@ class IndexView(TemplateView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    '''def get(self, request):
+    def get(self, request):
         organization = Organizacao.objects.filter(deleted_at__isnull=True, membros=request.user).first()
 
         context = {
@@ -22,4 +22,4 @@ class IndexView(TemplateView):
         }
         print(organization)
 
-        return render(request, 'index.html', context)'''
+        return render(request, 'index.html', context)

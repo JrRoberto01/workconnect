@@ -71,10 +71,12 @@ class Organizacao(Base):
 class Grupo(Base):
     nome = models.CharField(max_length=100)
     descricao = models.TextField()
-    admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='grupo_admins')
-    membros = models.ManyToManyField(User, related_name='membros_grupo')
+    admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='grupo_admins', null='True', blank='True')
+    membros = models.ManyToManyField(User, related_name='membros_grupo', null='True', blank='True')
+    organizacao = models.ForeignKey(Organizacao, on_delete=models.CASCADE, related_name='grupos_organizacao')
     grupo_img = StdImageField('grupo_img', upload_to='grupo_img', null=True, blank=True, variations={'thumbnail': {'width': 500, 'height': 500, 'crop': True}})
     capa_grupo_img = StdImageField('capa_grupo_img', upload_to='capa_grupo_img', null=True, blank=True, variations={'full': {'width': 1000, 'height': 500, 'crop': True}})
+    tipo = models.CharField(max_length=50, choices=[('privado', 'Privado'), ('publico', 'Público')], default='publico')
 
     def __str__(self):
         return self.nome

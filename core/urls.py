@@ -8,6 +8,7 @@ from .views import (
     ProfileView,
     ChatView,
     CreateOrgView,
+    GroupView,
 )
 
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     path('login_user', LoginTemplateView.as_view(), name='login_user'),
     path('profile', ProfileView.as_view(), name='profile'),
     path('chat', ChatView.as_view(), name='chat'),
+    path('group', GroupView.as_view(), name='group'),
     path('create-organization', CreateOrgView.as_view(), name='create-organization'),
     path("api/login/", LoginView.as_view(), name="login"),
     path("api/logout/", LogoutView.as_view(), name="logout"),
