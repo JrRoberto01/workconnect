@@ -53,10 +53,18 @@ class GroupForm(forms.ModelForm):
         }
 
     def save(self, user, commit=True):
-        grupo = super().save(commit=False)
+        organization = Organizacao.objects.filter(
+            deleted_at__isnull=True, membros=user
+        ).first()
+
+        grupo = super().save(commit=False)  # Não salva ainda
+
+        grupo.admin = user
+        if organization:
+            grupo.organizacao = organization
 
         if commit:
             grupo.save()
             grupo.membros.add(user)
-            grupo.admin.add(user)
+
         return grupo

@@ -18,7 +18,7 @@ body{
     color: var(--black);
     scroll-behavior: smooth;
 
-    & input, select, textarea{
+    & input, textarea{
         width: 100%;
         padding: 8px 15px;
         border: 1px solid var(--light-silver);
@@ -58,6 +58,7 @@ body{
         }
     }
 }
+
 .profile-image{
     width: 60px;
 
@@ -68,6 +69,27 @@ body{
         border-radius: 100px;
         cursor: pointer;
     }
+}
+
+#add-icon{
+    padding: 10px;
+    background-color: var(--dark-blue);
+    color: #fff;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: fixed;
+    right: 100px;
+    bottom: 100px;
+    box-shadow: 0px 8px 27px -13px rgba(0,0,0,0.1);
+}
+
+.active{
+    display: block !important;
 }
 
 /* Aside Main Navbar */
@@ -860,6 +882,13 @@ aside{
     border-radius: 25px;
     box-shadow: 0px 8px 27px -13px rgba(0,0,0,0.1);
     padding: 30px 0;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s;
+    z-index: 99;
 
     & .content{
         padding: 0 30px;
@@ -867,6 +896,14 @@ aside{
     & form{
         display: flex;
         flex-direction: column;
+
+        & select{
+            width: 100%;
+            padding: 8px 15px;
+            border: 1px solid var(--light-silver);
+            outline: none;
+            color: var(--black);
+        }
 
         & p{
             display: flex;
@@ -891,6 +928,17 @@ aside{
             transition: .2s;
         }
     }
+}
+
+#fade-background{
+    display: none;
+    background-color: rgba(0,0,0,0.3);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    cursor: pointer;
+    left: 0;
+    top: 0;
 }
 
 /* FOOTER */

@@ -17,7 +17,7 @@ class GroupView(TemplateView):
 
     def get(self, request):
         organization = Organizacao.objects.filter(deleted_at__isnull=True, membros=request.user).first()
-        groups = Grupo.objects.filter(deleted_at__isnull=True, membros=request.user)
+        groups = Grupo.objects.filter(deleted_at__isnull=True, membros=request.user, organizacao=organization)
         add_form = GroupForm()
 
         context = {
@@ -36,7 +36,7 @@ class GroupView(TemplateView):
             return redirect('group')
 
         organization = Organizacao.objects.filter(deleted_at__isnull=True, membros=request.user).first()
-        groups = Grupo.objects.filter(deleted_at__isnull=True, membros=request.user)
+        groups = Grupo.objects.filter(deleted_at__isnull=True, membros=request.user, organizacao=organization)
 
         context = {
             'organization': organization,
