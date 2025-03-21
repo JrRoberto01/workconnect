@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-5 col-md-12 col-sm-12">
+            <div class="row">
+                <div class="col">
+                    <section id="chat-peoples">
+                        <form>
+                            <input type="text" placeholder="Persquisar em conversas">
+                        </form>
+                        <h3>Conversas</h3>
+                        <div id="chats">
+                            {% include 'acessories/chat.html' %}
+                        </div>
+                    </section>
+                </div>  
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <section id="chat-content">
+                    {% include 'acessories/chat-conversation.html' %}
+                </section>
+            </div>
+        </div>
+    </div>
+<!--End Main Container-->
+</div>
+{% endblock %}

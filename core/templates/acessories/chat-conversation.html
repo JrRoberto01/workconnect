@@ -1,0 +1,52 @@
+{% load static %}
+<div id="header-chat">
+    <div class="profile">
+        <div class="profile-image">
+            <img class="offline" src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+        </div>
+        <div class="profile-user-title">
+            <div class="header-message">
+                <span><b>{{ user.first_name}} {{ user.last_name}}</b></span>
+                <i class="fa-solid fa-ellipsis more-chat-options"></i>
+            </div>
+            <span class="profile-chat-status">Online</span>
+        </div>
+    </div>
+</div>
+<div id="content-chat">
+    <div class="message-line-received">
+        <div class="profile">
+            <div class="profile-image">
+                <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+            </div>
+        </div>
+        <div class="message-content-box">
+            <p class="message-content">Este é um comentário</p>
+            <span class="message-timer">15:33</span>
+        </div>
+        <div class="message-content-actions">
+            <i class="fa-regular fa-heart"></i>
+            <i class="fa-solid fa-reply"></i>
+            <i class="fa-solid fa-ellipsis more-chat-options"></i>
+        </div>
+    </div>
+</div>
+<div id="comment-post">
+    <div class="profile-image">
+        <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+    </div>
+    <form>
+        <input type="text" placeholder="Fazer Comentário">
+        <div class="extras">
+            <div id="file-toggle">
+                <i class="fa-regular fa-file"></i>
+            </div>
+            <div id="emoji-toggle">
+                <i class="fa-solid fa-face-smile"></i>
+            </div>
+            <button type="submit">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </form>
+</div>

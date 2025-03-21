@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser
+from .models import CustomUser, Organizacao, User, Grupo
+from django import forms
 
 class CustomUserCreateForm(UserCreationForm):
 	class Meta:
@@ -19,3 +20,51 @@ class CustomUserChangeForm(UserChangeForm):
 	class Meta:
 		model = CustomUser #Definindo o modelo
 		fields = {'first_name', 'last_name'} #Devemos passar o que foi exatamente descrito no 'REQUIRED_FIELDS' presente no arquivo models do custom
+
+
+class OrganizacaoForm(forms.ModelForm):
+    class Meta:
+        model = Organizacao
+        fields = ['nome', 'logo']
+
+    def save(self, user, commit=True):
+        organizacao = super().save(commit=False)
+        if commit:
+            organizacao.save()
+            organizacao.membros.add(user)
+            organizacao.admin.add(user)
+        return organizacao
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Grupo
+        fields = ['nome', 'descricao', 'membros', 'grupo_img', 'tipo']
+
+        labels = {
+            'nome': 'Nome do Grupo',
+            'descricao': 'Descrição',
+            'membros': 'Membros',
+            'grupo_img': 'Imagem do Grupo',
+            'tipo': 'Tipo de Grupo',
+        }
+
+        widgets = {
+            'descricao': forms.Textarea(attrs={'placeholder': 'Descreva o grupo', 'rows': 2}),
+        }
+
+    def save(self, user, commit=True):
+        organization = Organizacao.objects.filter(
+            deleted_at__isnull=True, membros=user
+        ).first()
+
+        grupo = super().save(commit=False)  # Não salva ainda
+
+        grupo.admin = user
+        if organization:
+            grupo.organizacao = organization
+
+        if commit:
+            grupo.save()
+            grupo.membros.add(user)
+
+        return grupo

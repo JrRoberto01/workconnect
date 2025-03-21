@@ -1,0 +1,55 @@
+{% load static %}
+<aside>
+    <nav>
+        <a href="{% url 'index' %}">
+            <img src="{% static 'img/logo.png' %}">
+        </a>
+        <div class="content">
+            <div class="first-group">
+                <div id="notification-box" class="aside-nav-box">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+                <a class="aside-nav-box" href="{% url 'chat' %}">
+                    <i class="fa-solid fa-comment-dots"></i>
+                </a>
+                <a class="aside-nav-box" href="{% url 'group' %}">
+                    <i class="fa-solid fa-people-group"></i>
+                </a>
+                <a class="aside-nav-box" href="#">
+                    <i class="fa-solid fa-calendar"></i>
+                </a>
+            </div>
+            <div class="last-group">
+                <a class="aside-nav-box" href="{% url 'profile' %}">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div id="aside-opened-list">
+        <i id="close-aside"  class="fa-solid fa-xmark"></i>
+        <div class="content">
+            <h5>Notificações</h5>
+            <div id="not-readed-messages">
+                <span>Não lidas</span>
+                <div class="notification">
+                    <i class="fa-solid fa-circle"></i>
+                    <div>
+                        <p>Você entrou no grupo <b>Nome do Grupo</b></p>
+                        <p class="notification-time">12:50</p>
+                    </div>
+                </div>
+            </div>
+            <div id="readed-messages">
+                <span>Lidas Anteriormente</span>
+                <div class="notification">
+                    <i class="fa-solid fa-circle"></i>
+                    <div>
+                        <p>Você foi marcado na publicação de <b>Mariazinha</b></p>
+                        <p class="notification-time">12:50</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>

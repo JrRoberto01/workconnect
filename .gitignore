@@ -10,6 +10,7 @@ env/
 *.pyo
 *.pyd
 __pycache__/
+pycache/
 
 # Configurações específicas do IDE/Editor
 .vscode/
@@ -44,6 +45,8 @@ config/settings/.local/
 #celerybeat.pid
 
 # Migrations criadas automaticamente
-#*/migrations/*.pyc
-#*/migrations/*.py
-#!*/migrations/__init__.py
+*/migrations/*.pyc
+*/migrations/*.py
+*/migrations/__init__.py
+
+media/*
