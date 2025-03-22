@@ -1,8 +1,90 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<button id="logout-btn">sair</button>
-<!--End Main Container-->
+<link href="{% static 'style/profile.css' %}" rel="stylesheet">
+
+<div class="container">
+  <div class="profile-cover"
+    style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiQZmFkyJhj_zPTYvOO26i5Gj7Wc9CmpS1XQ&s');">
+  </div>
+  <div class="profile-header">
+    <div class="profile-picture">
+      {% if user.profile_image %}
+      <img src="{{ user.profile_image.url }}" alt="Foto de Perfil">
+      {% else %}
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7Yb3JG6TQcXa3agFEWorQvHAqdl-rxNaulw&s"
+        alt="Foto de Perfil">
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <h2>{{ user.name|default:"Nome Padrão" }}</h2>
+      <p>@{{ user.username|default:"username" }}</p>
+    </div>
+    <div class="profile-actions">
+      <button class="btn btn-primary">Editar Perfil</button>
+      <button id="logout-btn" class="btn btn-danger">Sair</button>
+    </div>
+  </div>
+</div>
+
+<!-- Navegação do perfil -->
+<div class="container profile-nav">
+  <ul class="nav nav-tabs justify-content-center shadow-sm">
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Posts</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Sobre</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Fotos</a>
+    </li>
+  </ul>
+</div>
+
+<!-- Conteúdo Principal -->
+<div class="container main-content">
+  <div class="row">
+    <!-- Timeline -->
+    <div class="col-md-8">
+      {% if posts|length == 0 %}
+      <!-- Posts de Exemplo -->
+      <div class="card post-card shadow-sm">
+        <div class="card-body">
+           
+          <h2>Usuario sem posts disponiveis.</h2>
+
+        </div>
+      </div>
+      {% else %}
+      {% for post in posts %}
+      <div class="row">
+        <div class="col">
+            <section id="posts">
+                {% include 'acessories/post.html' %}
+            </section>
+        </div>
+    </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-3">
+        <div class="card-body">
+          <h5>Sobre</h5>
+          <p>{{ user.profile.bio|default:"Sem biografia disponível." }}</p>
+          <hr>
+          <h6>Contato</h6>
+          <p>{{ user.email|default:"Email não informado." }}</p>
+          <hr>
+          <h6>Localização</h6>
+          <p>{{ user.profile.location|default:"Localização não informada." }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <script src="{% static 'scripts/logout-script.js' %}"></script>
 {% endblock %}
