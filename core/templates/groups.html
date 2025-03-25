@@ -14,9 +14,9 @@
                                     <img src="{{ group.grupo_img.thumbnail.url }}" alt="Foto de perfil">
                                 </div>
                                 <div class="profile-user-title">
-                                    <span><b><a href="#">{{ group.nome }}</a></b></span>
+                                    <span><b><a href="{% url 'group-detail' id=group.id %}">{{ group.nome }}</a></b></span>
                                     {% if group.tipo == 'publico' %}
-                                        <span class="post-role"><i class="fa-solid fa-earth-americas"></i> {{ group.tipo }}</span>
+                                        <span class="post-role"><i class="fa-solid fa-earth-americas"></i> Público</span>
                                     {% else %}
                                         <span class="post-role"><i class="fa-solid fa-lock"></i> {{ group.tipo }}</span>
                                     {% endif %}    

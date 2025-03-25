@@ -36,7 +36,9 @@
             <div class="row">
                 <div class="col">
                     <section id="posts">
-                        {% include 'acessories/post.html' %}
+                        {% for post in posts %}
+                            {% include 'acessories/post.html' %}
+                        {% endfor %}
                     </section>
                 </div>
             </div>

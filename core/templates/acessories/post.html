@@ -4,10 +4,10 @@
     <div class="header-post">
         <div class="profile">
             <div class="profile-image">
-                <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+                <img src="{{ post.autor.perfil_img.url }}" alt="Foto de perfil">
             </div>
             <div class="profile-user-title">
-                <span><b><a href="#">{{ user.first_name}} {{ user.last_name}}</a></b> <i class="fa-solid fa-right-long"></i> <a href="#"><span class="post-group-details">Grupo Projeto WorkConnect</span></a></span>
+                <span><b><a href="#">{{ post.autor.get_full_name}}</a></b> <i class="fa-solid fa-right-long"></i> <a href="{% url 'group-detail' id=post.grupo.id %}"><span class="post-group-details">{{ post.grupo.nome }}</span></a></span>
                 <span class="post-role">Project Management</span>
             </div>
         </div>
@@ -15,20 +15,23 @@
             <div id="more-options">
                 <i class="fa-solid fa-ellipsis"></i>
             </div>
-            <span><b>5</b> h</span>
+            <span><b>{{ post.hourCounter }}</b> h</span>
         </div>
     </div>
     <div class="content-post">
-        <h4>Adição Protótipo para o Front</h4>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+        <h4>{{ post.titulo }}</h4>
+        <p>{{ post.conteudo }}</p>
     </div>
     <div class="details-post">
         <div id="social-icons">
             <div id="likes">
-                <i id="heart-like" class="fa-regular fa-heart"></i>
-                <span><b>5</b></span>
+                <form>
+                    {% csrf_token %}
+                    <button class="like-button" data-post-id="{{ post.id }}">
+                        <i id="heart-like-{{ post.id }}" class="{% if post.is_liked %}fa-solid fa-heart{% else %}fa-regular fa-heart{% endif %}"></i>
+                    </button>
+                    <span id="like-count-{{ post.id }}"><b>{{ post.likes_count }}</b></span>
+                </form>
             </div>
             <div id="comments">
                 <i id="comment-icon" class="fa-regular fa-message"></i>
@@ -42,7 +45,7 @@
     <hr>
     <div class="comment-post">
         <div class="profile-image">
-            <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+            <img src="{{ user.perfil_img.url }}" alt="Foto de perfil">
         </div>
         <form>
             <input type="text" placeholder="Fazer Comentário">

@@ -466,6 +466,15 @@ aside{
                     justify-content: center;
                 }
 
+                & button{
+                    background: none;
+                    border: none;
+                }
+
+                & .fa-heart{
+                    color: var(--red);
+                }
+
                 & i{
                     cursor: pointer;
                     font-size: 1.3em;
@@ -876,6 +885,48 @@ aside{
     }
 }
 
+#group-cover{
+    margin-top: -85px;
+    text-align: center;
+    min-height: 450px;
+    max-height: 450px;
+    display: flex;
+    padding: 50px 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px 25px 0 0;
+    margin-bottom: 30px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: #fff;
+
+    & .group-detail-title{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+
+        & .post-role{
+            text-transform: capitalize;
+        }
+    }
+
+    & .profile{
+        margin-top: 50px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        & .profile-image{
+            width: 200px;
+        }
+    }
+}
+
 .modal-box{
     width: 500px;
     background-color: var(--white);
@@ -926,6 +977,58 @@ aside{
             border-radius: 25px;
             margin-top: 10px;
             transition: .2s;
+        }
+    }
+}
+
+#post-creator{
+    width: 800px;
+
+    & .header-post{
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+
+        & .header-options{
+            display: flex;
+            gap: 20px;
+            align-items: center;
+
+            & i{
+                color: var(--gray);
+                cursor: pointer;
+            }
+        }
+    }
+
+    & form{
+        & input, textarea{
+            border: none;
+            border-bottom: 1px solid var(--silver);
+            outline: none;
+        }
+        & textarea{
+            height: 200px;
+        }
+    }
+
+    & .extras{
+        display: flex;
+        gap: 18px;
+        width: 100%;
+        padding: 15px 0;
+        align-items: center;
+        justify-content: end;
+        font-size: 1.3em;
+        color: var(--gray);
+
+        & i{
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        & i:hover{
+            color: var(--light-blue);
         }
     }
 }

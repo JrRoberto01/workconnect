@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from stdimage.models import StdImageField
+from django.utils import timezone
 from django.utils.timezone import localtime, now
 
 class UserManager(BaseUserManager):
@@ -93,15 +94,42 @@ class Imagem(Base):
 
 # Modelo de Post
 class Post(Base):
-    descricao = models.CharField(max_length=255)
+    titulo = models.CharField(max_length=255)
     grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, related_name='grupo_posts')
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     conteudo = models.TextField()
-    imagens = models.ManyToManyField(Imagem, related_name='imagens_post', blank=True)
+    imagens = models.ManyToManyField(Imagem, related_name='imagens_post', blank=True, null=True)
+
+    def hourCounter(self):
+        now = timezone.now()
+        diff = now - self.created_at
+        hours = diff.total_seconds() / 3600
+
+        if hours < 1:
+            return f"{round(hours, 1)}"
+        else:
+            return f"{int(hours)}"
+
+    def likes_count(self):
+        return self.likes.count()
+
+    def user_liked(self, user):
+        return self.likes.filter(user=user).exists()
 
     def __str__(self):
-        return f"Post de {self.autor.email} - {self.descricao[:50]}"
+        return f"Post de {self.autor.email} - {self.titulo[:50]}"
 
+class Like(Base):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+class Comment(Base):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField()
 
 # Modelo de Evento
 class Evento(Base):
