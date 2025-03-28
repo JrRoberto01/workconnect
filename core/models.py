@@ -75,9 +75,34 @@ class Grupo(Base):
     admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='grupo_admins', null=True, blank='True')
     membros = models.ManyToManyField(User, related_name='membros_grupo', null=True, blank='True')
     organizacao = models.ForeignKey(Organizacao, on_delete=models.CASCADE, null=True, blank='True', related_name='grupos_organizacao')
-    grupo_img = StdImageField('grupo_img', upload_to='grupo_img', null=True, blank=True, variations={'thumbnail': {'width': 500, 'height': 500, 'crop': True}})
-    capa_grupo_img = StdImageField('capa_grupo_img', upload_to='capa_grupo_img', null=True, blank=True, variations={'full': {'width': 1000, 'height': 500, 'crop': True}})
     tipo = models.CharField(max_length=50, choices=[('privado', 'Privado'), ('publico', 'Público')], default='publico')
+    grupo_img = StdImageField(
+        'grupo_img',
+        upload_to='grupo_img',
+        null=True,
+        blank=True,
+        variations={
+            'thumbnail': {
+                'width': 500,
+                'height': 500,
+                'crop': True
+            }
+        }
+    )
+
+    capa_grupo_img = StdImageField(
+        'capa_grupo_img',
+        upload_to='capa_grupo_img',
+        null=True,
+        blank=True,
+        variations={
+            'cover': {
+                'width': 1000,
+                'height': 500,
+                'crop': True
+            }
+        }
+    )
 
     def __str__(self):
         return self.nome
@@ -103,12 +128,26 @@ class Post(Base):
     def hourCounter(self):
         now = timezone.now()
         diff = now - self.created_at
-        hours = diff.total_seconds() / 3600
+        seconds = diff.total_seconds()
 
-        if hours < 1:
-            return f"{round(hours, 1)}"
-        else:
-            return f"{int(hours)}"
+        minutes = seconds / 60
+        if minutes < 60:
+            return f"{round(minutes)} min"
+
+        hours = seconds / 3600
+        if hours < 24:
+            return f"{int(hours)} h"
+
+        days = seconds / 86400
+        if days < 365:
+            return f"{int(days)} d"
+
+        months = days / 30
+        if months < 12:
+            return f"{int(months)} mo"
+
+        years = days / 365
+        return f"{int(years)} yr"
 
     def likes_count(self):
         return self.likes.count()

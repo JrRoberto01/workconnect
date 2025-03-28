@@ -1,90 +1,102 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<link href="{% static 'style/profile.css' %}" rel="stylesheet">
-
-<div class="container">
-  <div class="profile-cover"
-    style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiQZmFkyJhj_zPTYvOO26i5Gj7Wc9CmpS1XQ&s');">
-  </div>
-  <div class="profile-header">
-    <div class="profile-picture">
-      {% if user.profile_image %}
-      <img src="{{ user.profile_image.url }}" alt="Foto de Perfil">
-      {% else %}
-      <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7Yb3JG6TQcXa3agFEWorQvHAqdl-rxNaulw&s"
-        alt="Foto de Perfil">
-      {% endif %}
+<div class="row" id="group-cover" {% if group.grupo.capa_grupo_img %}style="background: linear-gradient(rgba(27,38,59,1), rgba(27,38,59,0.3)), url('{{ group.capa_grupo_img.url }}');"{% else %}{% endif %}>
+    <div class="col group-detail-title">
+        <h1>{{ user.get_full_name }}</h1>  
+        <span class="post-role"><i class="fa-solid fa-earth-americas"></i> Membro</span>
     </div>
-    <div class="profile-info">
-      <h2>{{ user.name|default:"Nome Padrão" }}</h2>
-      <p>@{{ user.username|default:"username" }}</p>
+    <div class="profile">
+        {% if user.perfil_img %}
+        <div class="profile-image">
+            <img src="{{ user.perfil_img.thumbnail.url }}" alt="Foto de perfil">
+        </div>
+        {% else %}
+        <div class="profile-image">
+          <img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil">
+        </div>
+        {% endif %}
     </div>
-    <div class="profile-actions">
-      <button class="btn btn-primary">Editar Perfil</button>
-      <button id="logout-btn" class="btn btn-danger">Sair</button>
-    </div>
-  </div>
 </div>
-
-<!-- Navegação do perfil -->
-<div class="container profile-nav">
-  <ul class="nav nav-tabs justify-content-center shadow-sm">
-    <li class="nav-item">
-      <a class="nav-link active" href="#">Posts</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Sobre</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">Fotos</a>
-    </li>
-  </ul>
+<div class="row">
+    <div class="col-lg-8 col-md-12 col-sm-12">
+        <div class="row">
+            <div class="col">
+                <section id="feed-ordenator">
+                    <div>
+                        <h4><b>Feed</b></h4>
+                        <p>Veja publicações relevantes de {{ user.first_name }}</p>
+                    </div>
+                    <div id="ordenator-list">
+                        <form>
+                            <span>Classificar por</span>
+                            <select name="ordenator" id="ordenator">
+                                <option value="most-relevant">Mais Relevantes</option>
+                                <option value="most-recent" selected>Mais Recentes</option>
+                            </select>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <section id="posts">
+                    <!-- {% for post in posts %}
+                        {% include 'acessories/post.html' %}
+                    {% endfor %} -->
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="row">
+          <section id="aside-content">
+            <div id="profile-actions">
+              <button>Editar Perfil</button>
+              <button id="logout-btn">Sair</button>
+            </div>
+            <hr>
+            <div id="suggest-header">
+                <h3>Sugestão de Grupos Públicos</h3>
+                <i class="fa-solid fa-pen-to-square"></i>
+            </div>
+            <div id="group-suggestions">
+                <div class="group-suggest">
+                    <div class="cover" style="background: url('{% static 'img/cover_test.jpg' %}');"></div>
+                    <div class="content">
+                        <a href="#">
+                            <h5>Grupo Projeto WorkConnect</h5>
+                        </a>
+                        <div>
+                            <form>
+                                <button>Participar</button>
+                            </form>
+                            <span>Público | 15 Membros</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3>Sugestão de Pessoas</h3>
+            <div id="people-suggestions">
+                <div class="people-suggest">
+                    <div class="profile">
+                        <div class="profile-image">
+                            <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+                        </div>
+                        <div class="profile-user-title">
+                            <span><b><a href="#">{{ user.first_name}} {{ user.last_name}}</a></b></span>
+                            <span class="post-role">Project Management</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+            </div>
+        </section>
+        </div>
+    </div>
 </div>
-
-<!-- Conteúdo Principal -->
-<div class="container main-content">
-  <div class="row">
-    <!-- Timeline -->
-    <div class="col-md-8">
-      {% if posts|length == 0 %}
-      <!-- Posts de Exemplo -->
-      <div class="card post-card shadow-sm">
-        <div class="card-body">
-           
-          <h2>Usuario sem posts disponiveis.</h2>
-
-        </div>
-      </div>
-      {% else %}
-      {% for post in posts %}
-      <div class="row">
-        <div class="col">
-            <section id="posts">
-                {% include 'acessories/post.html' %}
-            </section>
-        </div>
-    </div>
-      {% endfor %}
-      {% endif %}
-    </div>
-
-    <div class="col-md-4">
-      <div class="card shadow-sm mb-3">
-        <div class="card-body">
-          <h5>Sobre</h5>
-          <p>{{ user.profile.bio|default:"Sem biografia disponível." }}</p>
-          <hr>
-          <h6>Contato</h6>
-          <p>{{ user.email|default:"Email não informado." }}</p>
-          <hr>
-          <h6>Localização</h6>
-          <p>{{ user.profile.location|default:"Localização não informada." }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+<!--End Main Container-->
 </div>
 <script src="{% static 'scripts/logout-script.js' %}"></script>
 {% endblock %}

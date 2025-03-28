@@ -55,30 +55,21 @@ REST_FRAMEWORK = {
     ),
 }
 
-'''
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
-}'''
-
-SIMPLE_JWT = {
-    'AUTH_COOKIE': 'access_token',  # Nome do cookie do token de acesso
-    'AUTH_COOKIE_REFRESH': 'refresh_token',  # Nome do cookie do refresh token
-    'AUTH_COOKIE_SECURE': False,  # Mude para True em produção com HTTPS
+    'AUTH_COOKIE': 'access_token',
+    'AUTH_COOKIE_REFRESH': 'refresh_token',
+    'AUTH_COOKIE_SECURE': False,
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',
     'AUTH_COOKIE_SAMESITE': 'Lax',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
-    'AUTH_HEADER_TYPES': ('Bearer',),  # Permite tokens no header também
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Backend padrão do Django
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 MIDDLEWARE = [

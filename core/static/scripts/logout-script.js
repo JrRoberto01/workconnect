@@ -10,7 +10,7 @@ document.getElementById("logout-btn").addEventListener("click", async function (
             }
 
             let data = await response.json();
-            window.location.href = "/login_user/";  // Redireciona para login
+            window.location.href = "/login_user";  // Redireciona para login
         } catch (error) {
             alert("Erro ao deslogar. Tente novamente!");
             console.error("Erro no logout:", error);

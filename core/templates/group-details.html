@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="row" id="group-cover" style="background: linear-gradient(rgba(27,38,59,1), rgba(27,38,59,0.3)), url('{{ group.capa_grupo_img.url }}');">
+<div class="row" id="group-cover" {% if group.capa_grupo_img %}style="background: linear-gradient(rgba(27,38,59,1), rgba(27,38,59,0.3)), url('{{ group.capa_grupo_img.url }}');"{% else %}{% endif %}>
     <div class="col group-detail-title">
         <h1>{{ group.nome }}</h1>  
         {% if group.tipo == 'publico' %}

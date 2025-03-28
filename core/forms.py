@@ -38,13 +38,14 @@ class OrganizacaoForm(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Grupo
-        fields = ['nome', 'descricao', 'membros', 'grupo_img', 'tipo']
+        fields = ['nome', 'descricao', 'membros', 'grupo_img', 'capa_grupo_img', 'tipo']
 
         labels = {
             'nome': 'Nome do Grupo',
             'descricao': 'Descrição',
             'membros': 'Membros',
             'grupo_img': 'Imagem do Grupo',
+            'capa_grupo_img': 'Imagem do Capa do Grupo',
             'tipo': 'Tipo de Grupo',
         }
 
