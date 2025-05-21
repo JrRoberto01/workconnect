@@ -183,3 +183,22 @@ class Evento(Base):
 
     def __str__(self):
         return f"Evento: {self.nome} - {self.data.strftime('%Y-%m-%d')}"
+
+class ChatRoom(Base):
+    is_group = models.BooleanField(default=False)
+    participants = models.ManyToManyField(User, related_name='chat_rooms')
+
+    def get_room_name(self):
+        if not self.is_group and self.participants.count() == 2:
+            ids = sorted([str(user.id) for user in self.participants.all()])
+            return f"{ids[0]}_{ids[1]}"
+        return f"group_{self.id}"
+
+class Message(Base):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']

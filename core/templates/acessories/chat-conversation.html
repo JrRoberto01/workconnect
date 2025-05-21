@@ -1,52 +1,93 @@
 {% load static %}
 <div id="header-chat">
-    <div class="profile">
-        <div class="profile-image">
-            <img class="offline" src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
-        </div>
-        <div class="profile-user-title">
-            <div class="header-message">
-                <span><b>{{ user.first_name}} {{ user.last_name}}</b></span>
-                <i class="fa-solid fa-ellipsis more-chat-options"></i>
-            </div>
-            <span class="profile-chat-status">Online</span>
-        </div>
-    </div>
+	<div class="profile">
+		{% if selected_user.perfil_img %}
+		<div class="profile-image">
+			<img src="{{ selected_user.perfil_img.thumbnail.url }}" alt="Foto de perfil"/>
+		</div>
+		{% else %}
+		<div class="profile-image">
+			<img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil" />
+		</div>
+		{% endif %}
+		<div class="profile-user-title">
+			<div class="header-message">
+				<span><b>{{ selected_user.first_name}} {{ selected_user.last_name}}</b></span>
+				<i class="fa-solid fa-ellipsis more-chat-options"></i>
+			</div>
+			<span class="profile-chat-status">Online</span> <!--Ainda preciso deixar isso dinâmico...-->
+		</div>
+	</div>
 </div>
 <div id="content-chat">
-    <div class="message-line-received">
-        <div class="profile">
-            <div class="profile-image">
-                <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
-            </div>
-        </div>
-        <div class="message-content-box">
-            <p class="message-content">Este é um comentário</p>
-            <span class="message-timer">15:33</span>
-        </div>
-        <div class="message-content-actions">
-            <i class="fa-regular fa-heart"></i>
-            <i class="fa-solid fa-reply"></i>
-            <i class="fa-solid fa-ellipsis more-chat-options"></i>
-        </div>
-    </div>
+	<!--Template das mensagens vindas via histórico presente no banco-->
+	{% for msg in messages %} {% if msg.sender == request.user %}
+	<!--Mensagem do usuário rementente-->
+	<div class="message-line-sent">
+		<div class="message-content-actions">
+			<i class="fa-solid fa-reply"></i>
+			<i class="fa-solid fa-ellipsis more-chat-options"></i>
+		</div>
+		<div class="message-content-box">
+			<p class="message-content">{{ msg.content }}</p>
+			<span class="message-timer">{{ msg.timestamp|time:"H:i" }}</span>
+		</div>
+	</div>
+	{% else %}
+	<!--Mensagem do usuário destinatário-->
+	<div class="message-line-received">
+		<div class="profile">
+			{% if msg.sender.perfil_img %}
+			<div class="profile-image">
+				<img src="{{ msg.sender.perfil_img.thumbnail.url }}" alt="Foto de perfil" />
+			</div>
+			{% else %}
+			<div class="profile-image">
+				<img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil" />
+			</div>
+			{% endif %}
+		</div>
+		<div class="message-content-box">
+			<p class="message-content">{{ msg.content }}</p>
+			<span class="message-timer">{{ msg.timestamp|time:"H:i" }}</span>
+		</div>
+		<div class="message-content-actions">
+			<i class="fa-regular fa-heart"></i>
+			<i class="fa-solid fa-reply"></i>
+			<i class="fa-solid fa-ellipsis more-chat-options"></i>
+		</div>
+	</div>
+	{% endif %} {% empty %}
+	<!--Mensagem padrão para chats sem histórico-->
+	<p>Sem registros de mensagens</p>
+	{% endfor %}
 </div>
+<!--Caixa de texto para envio de mensagens-->
 <div id="comment-post">
-    <div class="profile-image">
-        <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
-    </div>
-    <form>
-        <input type="text" placeholder="Fazer Comentário">
-        <div class="extras">
-            <div id="file-toggle">
-                <i class="fa-regular fa-file"></i>
-            </div>
-            <div id="emoji-toggle">
-                <i class="fa-solid fa-face-smile"></i>
-            </div>
-            <button type="submit">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </form>
+	<div class="profile-image">
+		{% if user.perfil_img %}
+		<div class="profile-image">
+			<img src="{{ user.perfil_img.thumbnail.url }}" alt="Foto de perfil" />
+		</div>
+		{% else %}
+		<div class="profile-image">
+			<img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil" />
+		</div>
+		{% endif %}
+	</div>
+
+	<form id="chat-form">
+		<input type="text" id="message-input" placeholder="Fazer Comentário" />
+		<div class="extras">
+			<div id="file-toggle">
+				<i class="fa-regular fa-file"></i>
+			</div>
+			<div id="emoji-toggle">
+				<i class="fa-solid fa-face-smile"></i>
+			</div>
+			<button type="submit" id="send-button">
+				<i class="fa-solid fa-paper-plane"></i>
+			</button>
+		</div>
+	</form>
 </div>

@@ -92,6 +92,10 @@ body{
     display: block !important;
 }
 
+.scrollable-div{
+    overflow-y: scroll;
+}
+
 /* Aside Main Navbar */
 aside{
     background-color: var(--light-blue);
@@ -654,6 +658,7 @@ aside{
     }
 }
 
+/* STYLE CHAT */
 #chat-peoples{
     background-color: var(--white);
     box-shadow: 0px 8px 27px -13px rgba(0,0,0,0.1);
@@ -663,6 +668,27 @@ aside{
     flex-direction: column;
     gap: 15px;
     min-height: 550px;
+
+    & #create-chat{
+        background-color: var(--silver);
+        padding: 5px 10px;
+        border-radius: 20px;
+        border: none;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+
+        & i{
+            margin: 0 15px;
+        }
+    }
+
+    & #create-chat:hover{
+        background-color: var(--light-blue);
+        color: #fff;
+    }
 
     & form{
         width: 100%;
@@ -737,140 +763,175 @@ aside{
     }
 }
 
-#chat-content{
+#chat-content {
     background-color: var(--white);
-    box-shadow: 0px 8px 27px -13px rgba(0,0,0,0.1);
-    /* padding: 30px; */
+    box-shadow: 0px 8px 27px -13px rgba(0, 0, 0, 0.1);
     padding: 0;
     border-radius: 25px;
     min-height: 550px;
+    max-height: 550px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
 
-    & #header-chat{
-        background-color: var(--light-blue);
-        width: 100%;
-        border-radius: 25px 25px 0 0;
-        padding: 15px 30px;
-        color: var(--white);
+#chat-content #header-chat {
+    background-color: var(--light-blue);
+    width: 100%;
+    border-radius: 25px 25px 0 0;
+    padding: 15px 30px;
+    color: var(--white);
+}
 
-        & .profile{
-            width: 100%;
-        }
-        & .profile-image{
-            width: 50px;
-        }
+#chat-content #header-chat .profile {
+    width: 100%;
+}
 
-        & .profile-user-title{
-            width: 100%;
+#chat-content #header-chat .profile-image {
+    width: 50px;
+}
 
-            & .header-message{
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                width: 100%;
+#chat-content #header-chat .profile-user-title {
+    width: 100%;
+}
 
-                & i{
-                    cursor: pointer;
-                    color: var(--silver);
-                }
-            }
-        }
-    }
+#chat-content #header-chat .header-message {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
 
-    & #content-chat{
-        padding: 0 30px;
-        height: 100%;
+#chat-content #header-chat .header-message i {
+    cursor: pointer;
+    color: var(--silver);
+}
 
-        & .message-line-received{
-            padding: 10px 0;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            max-width: 600px;
+#chat-content #content-chat {
+    padding: 0 30px;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+}
 
-            & .profile-image{
-                width: 40px;
-            }
-        }
+#chat-content #content-chat .message-line-received {
+    padding: 10px 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
 
-        & .message-content-box{
-            background-color: var(--silver);
-            padding: 5px 10px;
-            display: flex;
-            gap: 20px;
-            border-radius: 10px 0 10px 0;
+#chat-content #content-chat .message-line-received .profile-image {
+    width: 40px;
+}
 
-            & *{
-                padding: 0;
-                margin: 0;
-            }
-        }
+#chat-content #content-chat .message-line-sent {
+    padding: 10px 0;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+    align-items: end;
+    width: 100%;
+}
 
-        & .message-content-actions{
-            color: var(--silver);
-            display: flex;
-            gap: 20px;
-            font-weight: lighter;
+#chat-content #content-chat .message-content-box {
+    background-color: var(--silver);
+    padding: 5px 10px;
+    display: flex;
+    gap: 20px;
+    max-width: 600px;
+    border-radius: 10px 0 10px 0;
+}
 
-            & i{
-                transition: .5s;
-                cursor: pointer;
-            }
-        }
+#chat-content #content-chat .message-content-box * {
+    padding: 0;
+    margin: 0;
+}
 
-        & .message-content-actions i:hover{
-            color: var(--gray);
-        }
-    }
+#chat-content #content-chat .message-content-actions {
+    color: var(--silver);
+    display: flex;
+    gap: 20px;
+    font-weight: lighter;
+}
 
-    & #comment-post{
+#chat-content #content-chat .message-content-actions i {
+    transition: .5s;
+    cursor: pointer;
+}
+
+#chat-content #content-chat .message-content-actions i:hover {
+    color: var(--gray);
+}
+
+#chat-content #comment-post {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    padding: 0 30px 30px 30px;
+    margin: 0;
+    flex-direction: row;
+}
+
+#chat-content #comment-post .profile-image {
+    width: 40px;
+}
+
+#chat-content #comment-post form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-radius: 25px;
+    background-color: var(--silver);
+}
+
+#chat-content #comment-post form input {
+    background: none;
+    border: none;
+    outline: none;
+    width: 80%;
+    border-right: 1px solid var(--gray);
+}
+
+#chat-content #comment-post form .extras {
+    display: flex;
+    gap: 18px;
+    width: 20%;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    color: var(--gray);
+}
+
+#chat-content #comment-post form .extras button {
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+#chat-content #comment-post form .extras i {
+    cursor: pointer;
+}
+
+#chat-add-modal{
+    & .membro-chat-modal{
+        margin: 15px 0;
         display: flex;
-        gap: 10px;
+        align-items: center;
         justify-content: space-between;
-        padding: 0 30px 30px 30px;
-        margin: 0;
-        flex-direction: row;
 
-        & .profile-image{
-            width: 40px;
+        & a{
+            background-color: var(--lightest-blue);
+            padding: 6px 12px;
+            border-radius: 3px;
+            color: #fff;
+            transition: .2s;
         }
 
-        & form{
-            width: 100%;
-            display: flex;
-            align-items: center;
-            border-radius: 25px;
-            background-color: var(--silver);
-
-            & input{
-                background: none;
-                border: none;
-                outline: none;
-                width: 80%;
-                border-right: 1px solid var(--gray);
-            }
-
-            & .extras{
-                display: flex;
-                gap: 18px;
-                width: 20%;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.3em;
-                color: var(--gray);
-
-                & button{
-                    border: none;
-                    background: none;
-                    padding: 0;
-                }
-
-                & i{
-                    cursor: pointer;
-                }
-            }
+        & a:hover{
+            background-color: var(--dark-blue);
         }
     }
 }
