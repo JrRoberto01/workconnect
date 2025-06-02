@@ -16,5 +16,5 @@ class CreateOrgView(CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        organizacao = form.save(user=self.request.user)
+        self.object = form.save(user=self.request.user)
         return super().form_valid(form)

@@ -53,8 +53,21 @@
         <div class="row">
           <section id="aside-content">
             <div id="profile-actions">
-              <button>Editar Perfil</button>
-              <button id="logout-btn">Sair</button>
+                {% if request.user != usuario %}
+                    {% if request.user in usuario.followers.all %}
+                        <a class="btn btn-danger" href="{% url 'unfollow' usuario.id %}">Deixar de seguir</a>
+                    {% else %}
+                        <a class="btn btn-info" href="{% url 'follow' usuario.id %}">Seguir</a>
+                    {% endif %}
+                {% endif %}
+
+            <p>{{ usuario.followers.count }} seguidores</p>
+            <p>{{ usuario.following.count }} seguindo</p>
+
+                {% if request.user == usuario %}
+                    <button>Editar Perfil</button>
+                    <button id="logout-btn">Sair</button>
+                {% endif %}
             </div>
             <hr>
             <div id="suggest-header">
