@@ -36,6 +36,13 @@ class CustomUser(AbstractUser):
     email = models.EmailField('E-mail', unique=True)
     perfil_img = StdImageField('profile_img', upload_to='profile_img', null=True, blank=True, variations={'thumbnail': {'width': 500,'height': 500, 'crop': True}})
 
+    followers = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='following',
+        blank=True
+    )
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 

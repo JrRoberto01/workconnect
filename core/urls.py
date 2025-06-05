@@ -10,12 +10,16 @@ from .views import (
     CreateOrgView,
     GroupView,
     GroupDetailView,
+    follow_unfollow
     load_more_messages,
 )
 
-
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
+    path('login_user/', LoginTemplateView.as_view(), name='login_user'),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/<int:user_id>/', ProfileView.as_view(), name='profileid'),
+    path('chat', ChatView.as_view(), name='chat'),
     path('login_user', LoginTemplateView.as_view(), name='login_user'),
     path('profile', ProfileView.as_view(), name='profile'),
     path("chat/", ChatView.as_view(), name='chat'),
@@ -29,4 +33,7 @@ urlpatterns = [
     path("api/login/", LoginView.as_view(), name="login"),
     path("api/logout/", LogoutView.as_view(), name="logout"),
     path("api/token/refresh/", RefreshTokenView.as_view(), name="token_refresh"),
+
+    path('follow/<int:user_id>/', follow_unfollow.follow, name='follow'),
+    path('unfollow/<int:user_id>/', follow_unfollow.unfollow, name='unfollow'),
 ]
