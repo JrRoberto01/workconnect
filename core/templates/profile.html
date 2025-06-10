@@ -42,9 +42,9 @@
         <div class="row">
             <div class="col">
                 <section id="posts">
-                    <!-- {% for post in posts %}
+                    {% for post in posts %}
                         {% include 'acessories/post.html' %}
-                    {% endfor %} -->
+                    {% endfor %}
                 </section>
             </div>
         </div>
@@ -53,20 +53,27 @@
         <div class="row">
           <section id="aside-content">
             <div id="profile-actions">
+                <h3>Sobre</h3>
+                <p id="about-text-user">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+
+                <div class="follow-count">
+                    <p><i class="fa-solid fa-user"></i> {{ usuario.followers.count }} seguidores</p>
+                    <p><i class="fa-solid fa-user"></i> {{ usuario.following.count }} seguindo</p>
+                </div>
+
                 {% if request.user != usuario %}
                     {% if request.user in usuario.followers.all %}
-                        <a class="btn btn-danger" href="{% url 'unfollow' usuario.id %}">Deixar de seguir</a>
+                        <a class="no-follow-btn" href="{% url 'unfollow' usuario.id %}"><i class="fa-solid fa-user-minus"></i><p>Deixar de seguir</p></a>
                     {% else %}
-                        <a class="btn btn-info" href="{% url 'follow' usuario.id %}">Seguir</a>
+                        <a class="follow-btn" href="{% url 'follow' usuario.id %}"><i class="fa-solid fa-user-plus"></i><p>Seguir</p></a>
                     {% endif %}
                 {% endif %}
 
-            <p>{{ usuario.followers.count }} seguidores</p>
-            <p>{{ usuario.following.count }} seguindo</p>
-
                 {% if request.user == usuario %}
-                    <button>Editar Perfil</button>
-                    <button id="logout-btn">Sair</button>
+                    <div class="actions-btn">
+                        <button>Editar Perfil</button>
+                        <button id="logout-btn">Sair</button>
+                    </div>
                 {% endif %}
             </div>
             <hr>

@@ -616,6 +616,9 @@ aside{
 
     & #people-suggestions{
         margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
 
         & .people-suggest{
             display: flex;
@@ -633,9 +636,32 @@ aside{
     & #profile-actions{
         margin-bottom: 20px;
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
 
-        & button{
+        & .about-text-user{
+            color: #909090;
+            margin-top: 10px;
+        }
+
+        & .follow-count{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            color: #909090;
+
+            & i{
+                color: #415A77;
+            }
+        }
+
+        & .actions-btn{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        & button, .follow-btn{
             background-color: var(--light-blue);
             color: #fff;
             font-weight: bolder;
@@ -644,11 +670,25 @@ aside{
             border-radius: 5px;
         }
         
-        & #logout-btn{
+        & #logout-btn, .no-follow-btn{
             background-color: rgba(0,0,0,0);
             color: var(--red);
             border: 2px solid var(--red);
+            font-weight: bolder;
+            padding: 8px 15px;
+            border-radius: 5px;
             transition: .2s;
+        }
+
+        & .follow-btn, .no-follow-btn{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            & i, p{
+                margin: 0;
+                padding: 0;
+            }
         }
 
         & #logout-btn:hover{
@@ -659,6 +699,12 @@ aside{
 }
 
 /* STYLE CHAT */
+#welcome-chat-message{
+    text-align: center;
+    font-weight: 500;
+    color: #909090;
+    margin-top: 25px;
+}
 #chat-peoples{
     background-color: var(--white);
     box-shadow: 0px 8px 27px -13px rgba(0,0,0,0.1);
@@ -710,7 +756,8 @@ aside{
     & .chat{
         cursor: pointer;
         transition: .2s;
-        padding: 5px;
+        padding: 10px 5px;
+        margin: 10px 0;
 
         & hr{
             margin: 5px 0;

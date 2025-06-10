@@ -10,6 +10,7 @@ from .views import (
     CreateOrgView,
     GroupView,
     GroupDetailView,
+
     follow_unfollow,
     load_more_messages,
 )
@@ -21,7 +22,7 @@ urlpatterns = [
     path('profile/<int:user_id>/', ProfileView.as_view(), name='profileid'),
     path('chat', ChatView.as_view(), name='chat'),
     path('login_user', LoginTemplateView.as_view(), name='login_user'),
-    path('profile', ProfileView.as_view(), name='profile'),
+    path('profile/<int:id>/', ProfileView.as_view(), name='profile'),
     path("chat/", ChatView.as_view(), name='chat'),
     path("chat/<int:user_id>/", ChatView.as_view(), name="sala_chat"),
     path('chat/load-messages/<str:room_name>/', load_more_messages, name='load_more_messages'),

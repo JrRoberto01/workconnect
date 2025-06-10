@@ -1,4 +1,5 @@
 {% load static %}
+{% if selected_user %}
 <div id="header-chat">
 	<div class="profile">
 		{% if selected_user.perfil_img %}
@@ -15,7 +16,7 @@
 				<span><b>{{ selected_user.first_name}} {{ selected_user.last_name}}</b></span>
 				<i class="fa-solid fa-ellipsis more-chat-options"></i>
 			</div>
-			<span class="profile-chat-status">Online</span> <!--Ainda preciso deixar isso dinâmico...-->
+			<!--span class="profile-chat-status">Online</-span--> <!--Ainda preciso deixar isso dinâmico...-->
 		</div>
 	</div>
 </div>
@@ -59,7 +60,7 @@
 	</div>
 	{% endif %} {% empty %}
 	<!--Mensagem padrão para chats sem histórico-->
-	<p>Sem registros de mensagens</p>
+	<p id="welcome-chat-message">Iniciar Novo Chat</p>
 	{% endfor %}
 </div>
 <!--Caixa de texto para envio de mensagens-->
@@ -91,3 +92,4 @@
 		</div>
 	</form>
 </div>
+{% endif %}

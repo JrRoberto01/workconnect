@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
-from ..models import Organizacao
+from ..models import Organizacao, CustomUser, Post
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -29,6 +29,6 @@ class ProfileView(TemplateView):
 
         context['usuario'] = usuario
         context['user'] = usuario  # se o template usa {{ user }}, também já fica funcionando
-        #context['posts'] = Post.objects.filter(autor=usuario)  # se quiser carregar posts dele
+        context['posts'] = Post.objects.filter(autor=usuario).order_by('-created_at')
 
         return context

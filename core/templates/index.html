@@ -48,7 +48,7 @@
                 <section id="aside-content">
                     <div id="suggest-header">
                         <h3>Sugestão de Grupos Públicos</h3>
-                        <i class="fa-solid fa-pen-to-square"></i>
+                        <!-- <i class="fa-solid fa-pen-to-square"></i> -->
                     </div>
                     <div id="group-suggestions">
                         <div class="group-suggest">
@@ -68,18 +68,26 @@
                     </div>
                     <h3>Sugestão de Pessoas</h3>
                     <div id="people-suggestions">
+                        {% for user_u in users %}
                         <div class="people-suggest">
                             <div class="profile">
-                                <div class="profile-image">
-                                    <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
-                                </div>
+                                {% if user_u.perfil_img %}
+                                    <div class="profile-image">
+                                        <img src="{{ user_u.perfil_img.thumbnail.url }}" alt="Foto de perfil"/>
+                                    </div>
+                                {% else %}
+                                    <div class="profile-image">
+                                        <img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil" />
+                                    </div>
+                                {% endif %}
                                 <div class="profile-user-title">
-                                    <span><b><a href="#">{{ user.first_name}} {{ user.last_name}}</a></b></span>
+                                    <span><b><a href="{% url 'profile' id=user_u.id %}">{{ user_u.get_full_name}}</a></b></span>
                                     <span class="post-role">Project Management</span>
                                 </div>
                             </div>
                             <i class="fa-solid fa-user-plus"></i>
                         </div>
+                        {% endfor %}
                     </div>
                 </section>
             </div>
