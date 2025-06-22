@@ -14,6 +14,7 @@ from .views import (
     follow_unfollow,
     load_more_messages,
 )
+from .views.agenda import agenda_view, deletar_evento
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
@@ -37,4 +38,8 @@ urlpatterns = [
 
     path('follow/<int:user_id>/', follow_unfollow.follow, name='follow'),
     path('unfollow/<int:user_id>/', follow_unfollow.unfollow, name='unfollow'),
+
+    path('agenda/', agenda_view, name='agenda_view'),
+    path('agenda/deletar/<int:evento_id>/', deletar_evento, name='deletar_evento'),
+
 ]

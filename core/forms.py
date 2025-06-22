@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Organizacao, User, Grupo
+from .models import CustomUser, Organizacao, User, Grupo, Evento
 from django import forms
 
 class CustomUserCreateForm(UserCreationForm):
@@ -69,3 +69,18 @@ class GroupForm(forms.ModelForm):
             grupo.membros.add(user)
 
         return grupo
+
+class EventoForm(forms.ModelForm):
+    participantes = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label='Participantes'
+    )
+
+    class Meta:
+        model = Evento
+        fields = ['nome', 'descricao', 'tipo', 'data', 'modalidade', 'link', 'participantes']
+        widgets = {
+            'data': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }

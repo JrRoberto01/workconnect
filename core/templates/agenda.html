@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Agenda de Eventos</h2>
+
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal">
+  Criar Novo Evento
+</button>
+
+<hr>
+
+<ul>
+<!-- Listar eventos -->
+{% for evento in eventos %}
+  <div>
+    <h4>{{ evento.nome }} - {{ evento.data|date:"d/m/Y H:i" }}</h4>
+    <p>Autor: {{ evento.autor.username }}</p>
+    <p>{{ evento.descricao }}</p>
+    <p><strong>Participantes:</strong>
+    {% for participante in evento.participantes.all %}
+      {{ participante.username }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+      Nenhum participante ainda.
+    {% endfor %}
+  </p>
+    {% if evento.autor == user %}
+    <!-- abrir modal de editar -->
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editarModal{{ evento.id }}">
+      Editar
+    </button>
+
+    <!-- abrir modal de deletar -->
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletarModal{{ evento.id }}">
+      Excluir
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- Modal de edicao -->
+<div class="modal fade" id="editarModal{{ evento.id }}" tabindex="-1" aria-labelledby="editarModalLabel{{ evento.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'agenda_view' %}">
+          {% csrf_token %}
+          <input type="hidden" name="evento_id" value="{{ evento.id }}">
+
+          <div class="modal-header">
+            <h5 class="modal-title" id="editarModalLabel{{ evento.id }}">Editar Evento</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+
+          <div class="modal-body">
+            <!-- Campos  -->
+            <div class="mb-3">
+              <label for="nome{{ evento.id }}" class="form-label">Nome</label>
+              <input type="text" name="nome" id="nome{{ evento.id }}" class="form-control" value="{{ evento.nome }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="descricao{{ evento.id }}" class="form-label">Descrição</label>
+              <textarea name="descricao" id="descricao{{ evento.id }}" class="form-control" required>{{ evento.descricao }}</textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="tipo{{ evento.id }}" class="form-label">Tipo</label>
+              <input type="text" name="tipo" id="tipo{{ evento.id }}" class="form-control" value="{{ evento.tipo }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="data{{ evento.id }}" class="form-label">Data e Hora</label>
+              <input type="datetime-local" name="data" id="data{{ evento.id }}" class="form-control" value="{{ evento.data|date:'Y-m-d\TH:i' }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="modalidade{{ evento.id }}" class="form-label">Modalidade</label>
+              <select name="modalidade" id="modalidade{{ evento.id }}" class="form-select" required>
+                <option value="presencial" {% if evento.modalidade == 'presencial' %}selected{% endif %}>Presencial</option>
+                <option value="online" {% if evento.modalidade == 'online' %}selected{% endif %}>Online</option>
+                <option value="hibrido" {% if evento.modalidade == 'hibrido' %}selected{% endif %}>Híbrido</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="link{{ evento.id }}" class="form-label">Link</label>
+              <input type="url" name="link" id="link{{ evento.id }}" class="form-control" value="{{ evento.link }}">
+            </div>
+          </div>
+          
+          <div class="mb-3">
+                <label for="participantes{{ evento.id }}">Participantes</label>
+                {% for user in users %}
+                  <div>
+                    <input type="checkbox" name="participantes" value="{{ user.id }}"
+                      {% if user in evento.participantes.all %}checked{% endif %}>
+                    {{ user.username }}
+                  </div>
+                {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar alterações</button>
+          </div>
+          <div class="mb-3">
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- confirmação de deletar -->
+<div class="modal fade" id="deletarModal{{ evento.id }}" tabindex="-1" aria-labelledby="deletarModalLabel{{ evento.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'deletar_evento' evento.id %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="deletarModalLabel{{ evento.id }}">Confirmar Exclusão</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          Tem certeza que deseja excluir o evento "<strong>{{ evento.nome }}</strong>"?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Excluir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+</ul>
+
+<!-- Modal -->
+<div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Criar Evento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          {{ form.as_p }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Evento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
