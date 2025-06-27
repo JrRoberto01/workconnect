@@ -5,10 +5,30 @@ let today = new Date();
 let currentMonth = today.getMonth(); // 0 = janeiro
 let currentYear = today.getFullYear();
 
-// Exemplo de dias selecionados (pode ser dinâmico depois)
-const selectedDays = {
-  "2025-03": [11, 16, 20, 24, 30], // Exemplo para março de 2025
-};
+function processEventDates(dates) {
+  const eventsByMonth = {};
+
+  dates.forEach(dateString => {
+    const date = new Date(dateString + 'T00:00:00');
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const key = `${year}-${String(month).padStart(2, '0')}`;
+
+    if (!eventsByMonth[key]) {
+      eventsByMonth[key] = [];
+    }
+
+    if (!eventsByMonth[key].includes(day)) {
+      eventsByMonth[key].push(day);
+    }
+  });
+
+  return eventsByMonth;
+}
+
+const selectedDays = processEventDates(window.eventDates || []);
 
 function getDaysInMonth(month, year) {
   return new Date(year, month + 1, 0).getDate();

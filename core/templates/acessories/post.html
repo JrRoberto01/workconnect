@@ -8,14 +8,14 @@
             </div>
             <div class="profile-user-title">
                 <span><b><a href="#">{{ post.autor.get_full_name}}</a></b> <i class="fa-solid fa-right-long"></i> <a href="{% url 'group-detail' id=post.grupo.id %}"><span class="post-group-details">{{ post.grupo.nome }}</span></a></span>
-                <span class="post-role">Project Management</span>
+                <!-- <span class="post-role">Project Management</span> -->
             </div>
         </div>
         <div class="header-options">
             <span>{{ post.hourCounter }}</span>
-            <div id="more-options">
+            <!-- <div id="more-options">
                 <i class="fa-solid fa-ellipsis"></i>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="content-post">
@@ -33,16 +33,16 @@
                     <span id="like-count-{{ post.id }}"><b>{{ post.likes_count }}</b></span>
                 </form>
             </div>
-            <div id="comments">
+            <!-- <div id="comments">
                 <i id="comment-icon" class="fa-regular fa-message"></i>
                 <span><b>7</b></span>
-            </div>
+            </div> -->
         </div>
-        <div id="share">
+        <!-- <div id="share">
             <i class="fa-solid fa-share"></i>
-        </div>
+        </div> -->
     </div>
-    <hr>
+    <!-- <hr>
     <div class="comment-post">
         <div class="profile-image">
             <img src="{{ user.perfil_img.url }}" alt="Foto de perfil">
@@ -61,5 +61,5 @@
                 </button>
             </div>
         </form>
-    </div>
+    </div> -->
 </div>

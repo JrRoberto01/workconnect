@@ -81,7 +81,7 @@ class GroupForm(forms.ModelForm):
 
 class EventoForm(forms.ModelForm):
     tipo = forms.ChoiceField(
-        choices=TIPO_EVENTO_CHOICES,
+        choices=TIPO_EVENTO_CHOICES, # Corrigido para usar TIPO_EVENTO_CHOICES definido neste arquivo
         widget=forms.Select(attrs={'class': 'form-select'}),
         required=True,
         label='Tipo'
@@ -89,7 +89,7 @@ class EventoForm(forms.ModelForm):
 
     descricao = forms.CharField(
         widget=forms.Textarea(attrs={
-            'rows': 2,  # Quantidade de linhas visíveis
+            'rows': 2,
             'class': 'form-control'
         }),
         label='Descrição',
@@ -106,6 +106,7 @@ class EventoForm(forms.ModelForm):
         required=False,
         label='Participantes'
     )
+    link = forms.URLField(required=False)
 
     class Meta:
         model = Evento
@@ -113,3 +114,19 @@ class EventoForm(forms.ModelForm):
         widgets = {
             'data': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        instance = kwargs.get('instance', None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            organization = Organizacao.objects.filter(membros=user).first()
+            if organization:
+                self.fields['participantes'].queryset = User.objects.filter(
+                    membros_organizacao=organization)
+            else:
+                self.fields['participantes'].queryset = User.objects.none()
+
+            if instance is None:
+                self.fields['participantes'].queryset = self.fields['participantes'].queryset.exclude(id=user.id)

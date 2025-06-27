@@ -1114,11 +1114,17 @@ aside{
                 color: var(--black);
             }
 
+            & .event-options{
+                & a{
+                    margin-right: 20px;
+                    color: var(--gray);
+                }
+            }
+
             & button{
                 background-color: #fff;
                 border: none;
                 outline: none;
-                font-size: 1.3em;
                 margin-right: 20px;
             }
 
@@ -1237,11 +1243,11 @@ aside{
     transform: translate(-50%, -50%);
     transition: 0.5s;
     z-index: 99;
-    max-height: 700px;
-    overflow-y: scroll;
 
     & .content{
         padding: 0 30px;
+        max-height: 700px;
+        overflow-y: auto;
     }
     & form{
         display: flex;

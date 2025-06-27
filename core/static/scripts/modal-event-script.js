@@ -1,53 +1,65 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Modal de edição
-  document.querySelectorAll(".open-edit-modal").forEach(btn => {
+
+  document.querySelectorAll(".open-edit-modal").forEach((btn) => {
     btn.addEventListener("click", function () {
-      document.getElementById("edit-evento-id").value = this.dataset.id;
-      document.getElementById("edit-nome").value = this.dataset.nome;
-      document.getElementById("edit-descricao").value = this.dataset.descricao;
-      document.getElementById("edit-tipo").value = this.dataset.tipo;
-      document.getElementById("edit-data").value = this.dataset.data;
-      document.getElementById("edit-modalidade").value = this.dataset.modalidade;
-      document.getElementById("edit-link").value = this.dataset.link;
+      const editModal = document.getElementById("editarModal");
+      if (!editModal) return;
+
+      editModal.querySelector("#edit-evento-id").value = this.dataset.id;
+      
+      editModal.querySelector("#id_nome").value = this.dataset.nome;
+      editModal.querySelector("#id_descricao").value = this.dataset.descricao;
+      editModal.querySelector("#id_tipo").value = this.dataset.tipo;
+      editModal.querySelector("#id_data").value = this.dataset.data;
+      editModal.querySelector("#id_modalidade").value = this.dataset.modalidade;
+      editModal.querySelector("#id_link").value = this.dataset.link;
+
+      const participantesData = this.dataset.participantes;
+      const participantesIds = participantesData ? participantesData.split(",") : [];
+
+      const selectParticipantes = editModal.querySelector("#id_participantes"); 
+      
+      if (selectParticipantes) {
+        for (const option of selectParticipantes.options) {
+          option.selected = participantesIds.includes(String(option.value));
+        }
+        selectParticipantes.dispatchEvent(new Event('change'));
+      }
     });
   });
 
-  // Modal de exclusão
-  document.querySelectorAll(".open-delete-modal").forEach(btn => {
-    btn.addEventListener("click", function () {
-      const eventoId = this.dataset.id;
-      const nome = this.dataset.nome;
-      document.getElementById("delete-event-name").innerText = nome;
-      document.getElementById("delete-form").action = `/agenda/deletar/${eventoId}/`; // ajuste se necessário
-    });
-  });
-});
+  function setupPillRendering(selectElement, containerElement) {
+    if (!selectElement || !containerElement) {
+      return;
+    }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const select = document.getElementById("select-participantes");
-  const selectedUsersContainer = document.getElementById("selected-users");
+    function renderPills() {
+      containerElement.innerHTML = "";
+      Array.from(selectElement.selectedOptions).forEach(option => {
+        const userSpan = document.createElement("span");
+        userSpan.classList.add("selected-user");
+        userSpan.textContent = option.text;
 
-  function renderSelectedUsers() {
-    selectedUsersContainer.innerHTML = "";
-    Array.from(select.selectedOptions).forEach(option => {
-      const userSpan = document.createElement("span");
-      userSpan.classList.add("selected-user");
-      userSpan.textContent = option.text;
+        const removeBtn = document.createElement("span");
+        removeBtn.textContent = " ×";
+        removeBtn.classList.add("remove-user");
+        removeBtn.addEventListener("click", () => {
+          option.selected = false;
 
-      const removeBtn = document.createElement("span");
-      removeBtn.textContent = " ×";
-      removeBtn.classList.add("remove-user");
-      removeBtn.addEventListener("click", () => {
-        option.selected = false;
-        renderSelectedUsers();
+          selectElement.dispatchEvent(new Event('change'));
+        });
+
+        userSpan.appendChild(removeBtn);
+        containerElement.appendChild(userSpan);
       });
+    }
 
-      userSpan.appendChild(removeBtn);
-      selectedUsersContainer.appendChild(userSpan);
-    });
+    selectElement.addEventListener("change", renderPills);
+
+    renderPills();
   }
+  const createSelect = document.querySelector("#createEventModal #id_participantes");
+  const createContainer = document.querySelector("#createEventModal #selected-users");
+  setupPillRendering(createSelect, createContainer);
 
-  select.addEventListener("change", renderSelectedUsers);
-
-  renderSelectedUsers();
 });

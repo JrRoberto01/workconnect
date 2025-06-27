@@ -1,12 +1,11 @@
-modal_element = document.querySelector(".modal-box");
-create_event_modal = document.getElementById("createEventModal");
-bg_element = document.getElementById("fade-background");
-edit_event_modal = document.getElementById("editarModal");
-delete_modal =document.getElementById("deletarModal");
+let modal_element = document.querySelector(".modal-box");
+let create_event_modal = document.getElementById("createEventModal");
+let bg_element = document.getElementById("fade-background");
+let edit_event_modal = document.getElementById("editarModal");
+let delete_modal =document.getElementById("deletarModal");
 
 function openModal(){
     modal_element.classList.add("active");
-    create_event_modal.classList.add("active");
     bg_element.classList.add("active");
 }
 
@@ -15,7 +14,13 @@ function openEditEventModal(){
     bg_element.classList.add("active");
 }
 
-function openDeleteEventModal(){
+function openDeleteEventModal(button) {
+    const eventoId = button.dataset.id;
+    const nome = button.dataset.nome;
+
+    document.getElementById("delete-event-name").innerText = nome;
+    document.getElementById("delete-form").action = `/agenda/deletar/${eventoId}/`;
+
     delete_modal.classList.add("active");
     bg_element.classList.add("active");
 }

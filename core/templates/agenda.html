@@ -38,7 +38,8 @@
 							</div>
 							{% if evento.autor == user %}
 							<div class="event-options">
-								<button
+								<a href="{{ evento.link }}" target="_blank"><i class="fa-solid fa-link"></i></a>
+								<!-- <button
 									class="open-edit-modal"
 									data-bs-target="#editarModal"
 									data-id="{{ evento.id }}"
@@ -48,17 +49,18 @@
 									data-data="{{ evento.data|date:'Y-m-d\\TH:i' }}"
 									data-modalidade="{{ evento.modalidade }}"
 									data-link="{{ evento.link }}"
-									data-participantes="{{ evento.participantes.all|join:',' }}">
+									data-participantes="{% for p in evento.participantes.all %}{{ p.id }}{% if not forloop.last %},{% endif %}{% endfor %}" 
+									onclick="openEditEventModal()">
 										<i class="fa-solid fa-pencil"></i>
-								</button>
+								</button> -->
 								
-								<button 
+								<button
 									data-bs-target="#deletarModal"
 									data-id="{{ evento.id }}"
-  									data-nome="{{ evento.nome }}"
-									class="exclude-btn" onclick="openDeleteEventModal()">
-										<i class="fa-solid fa-trash"></i>
-									</button>
+									data-nome="{{ evento.nome }}"
+									class="open-delete-modal" onclick="openDeleteEventModal(this)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
 							</div>
 							{% endif %}
 						</div>
@@ -71,65 +73,49 @@
 </div>
 
 <!-- Modal Dinâmico de Edição -->
-<div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form method="POST" action="{% url 'agenda_view' %}">
-				{% csrf_token %}
-				<input type="hidden" name="evento_id" id="edit-evento-id">
+<div class="modal-box" id="editarModal">
+    <div class="content">
+        <h3>Visualizar / Editar Evento</h3>
+        <form method="POST" action="{% url 'agenda_view' %}">
+            {% csrf_token %}
+            <input type="hidden" name="evento_id" id="edit-evento-id">
 
-				<div class="modal-header">
-					<h5 class="modal-title">Editar Evento</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-				</div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Nome do Evento</label>
+                    {{ form.nome }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descrição do Evento</label>
+                    {{ form.descricao }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Evento</label>
+                    {{ form.tipo }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Data e Hora do Evento</label>
+                    {{ form.data }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Modalidade do Evento</label>
+                    {{ form.modalidade }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Link do Evento</label>
+                    {{ form.link }}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.participantes.id_for_label }}" class="form-label">Participantes</label>
+                    {{ form.participantes }}
+                </div>
+            </div>
 
-				<div class="modal-body">
-					<div class="mb-3">
-						<label class="form-label">Nome do Evento</label>
-						<input type="text" name="nome" id="edit-nome" class="form-control" required>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label">Descrição do Evento</label>
-						<textarea name="descricao" id="edit-descricao" class="form-control" required></textarea>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label">Tipo de Evento</label>
-						<select name="tipo" id="edit-tipo" class="form-control" required>
-							<option value="Reunião" selected>Reunião</option>
-							<option value="Tarefa">Tarefa</option>
-							<option value="Outro">Outro</option>
-						</select>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label">Data e Hora do Evento</label>
-						<input type="datetime-local" name="data" id="edit-data" class="form-control" required>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label">Modalidade do Evento</label>
-						<select name="modalidade" id="edit-modalidade" class="form-select" required>
-							<option value="presencial">Presencial</option>
-							<option value="online">Online</option>
-							<option value="hibrido">Híbrido</option>
-						</select>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label">Link do Evento</label>
-						<input type="url" name="link" id="edit-link" class="form-control">
-					</div>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-primary">Salvar alterações</button>
-				</div>
-			</form>
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Salvar alterações</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Modal Dinâmico de Exclusão -->
@@ -142,35 +128,11 @@
 				Tem certeza que deseja excluir o evento <strong id="delete-event-name"></strong>?
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 				<button type="submit" class="btn btn-danger">Excluir</button>
 			</div>
 		</form>
-		</div>
-</div>
-
-
-<!-- <div class="modal fade" id="deletarModal" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form method="POST" id="delete-form">
-				{% csrf_token %}
-				<div class="modal-header">
-					<h5 class="modal-title">Confirmar Exclusão</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-				</div>
-				<div class="modal-body">
-					Tem certeza que deseja excluir o evento <strong id="delete-event-name"></strong>?
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-danger">Excluir</button>
-				</div>
-			</form>
-		</div>
 	</div>
-</div> -->
-
+</div>
 
 <!-- Modal Criação -->
 <div class="modal-box" id="createEventModal">
@@ -215,7 +177,6 @@
 			</div>
 		
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 				<button type="submit" class="btn btn-primary">Salvar Evento</button>
 			</div>
 		</form>
