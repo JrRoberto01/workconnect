@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from stdimage.models import StdImageField
+from django.utils import timezone
 from django.utils.timezone import localtime, now
 
 class UserManager(BaseUserManager):
@@ -34,6 +35,13 @@ class UserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     email = models.EmailField('E-mail', unique=True)
     perfil_img = StdImageField('profile_img', upload_to='profile_img', null=True, blank=True, variations={'thumbnail': {'width': 500,'height': 500, 'crop': True}})
+
+    followers = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='following',
+        blank=True
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -74,9 +82,34 @@ class Grupo(Base):
     admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='grupo_admins', null=True, blank='True')
     membros = models.ManyToManyField(User, related_name='membros_grupo', null=True, blank='True')
     organizacao = models.ForeignKey(Organizacao, on_delete=models.CASCADE, null=True, blank='True', related_name='grupos_organizacao')
-    grupo_img = StdImageField('grupo_img', upload_to='grupo_img', null=True, blank=True, variations={'thumbnail': {'width': 500, 'height': 500, 'crop': True}})
-    capa_grupo_img = StdImageField('capa_grupo_img', upload_to='capa_grupo_img', null=True, blank=True, variations={'full': {'width': 1000, 'height': 500, 'crop': True}})
     tipo = models.CharField(max_length=50, choices=[('privado', 'Privado'), ('publico', 'Público')], default='publico')
+    grupo_img = StdImageField(
+        'grupo_img',
+        upload_to='grupo_img',
+        null=True,
+        blank=True,
+        variations={
+            'thumbnail': {
+                'width': 500,
+                'height': 500,
+                'crop': True
+            }
+        }
+    )
+
+    capa_grupo_img = StdImageField(
+        'capa_grupo_img',
+        upload_to='capa_grupo_img',
+        null=True,
+        blank=True,
+        variations={
+            'cover': {
+                'width': 1000,
+                'height': 500,
+                'crop': True
+            }
+        }
+    )
 
     def __str__(self):
         return self.nome
@@ -93,15 +126,56 @@ class Imagem(Base):
 
 # Modelo de Post
 class Post(Base):
-    descricao = models.CharField(max_length=255)
+    titulo = models.CharField(max_length=255)
     grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, related_name='grupo_posts')
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     conteudo = models.TextField()
-    imagens = models.ManyToManyField(Imagem, related_name='imagens_post', blank=True)
+    imagens = models.ManyToManyField(Imagem, related_name='imagens_post', blank=True, null=True)
+
+    def hourCounter(self):
+        now = timezone.now()
+        diff = now - self.created_at
+        seconds = diff.total_seconds()
+
+        minutes = seconds / 60
+        if minutes < 60:
+            return f"{round(minutes)} min"
+
+        hours = seconds / 3600
+        if hours < 24:
+            return f"{int(hours)} h"
+
+        days = seconds / 86400
+        if days < 365:
+            return f"{int(days)} d"
+
+        months = days / 30
+        if months < 12:
+            return f"{int(months)} mo"
+
+        years = days / 365
+        return f"{int(years)} yr"
+
+    def likes_count(self):
+        return self.likes.count()
+
+    def user_liked(self, user):
+        return self.likes.filter(user=user).exists()
 
     def __str__(self):
-        return f"Post de {self.autor.email} - {self.descricao[:50]}"
+        return f"Post de {self.autor.email} - {self.titulo[:50]}"
 
+class Like(Base):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+class Comment(Base):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField()
 
 # Modelo de Evento
 class Evento(Base):
@@ -116,3 +190,22 @@ class Evento(Base):
 
     def __str__(self):
         return f"Evento: {self.nome} - {self.data.strftime('%Y-%m-%d')}"
+
+class ChatRoom(Base):
+    is_group = models.BooleanField(default=False)
+    participants = models.ManyToManyField(User, related_name='chat_rooms')
+
+    def get_room_name(self):
+        if not self.is_group and self.participants.count() == 2:
+            ids = sorted([str(user.id) for user in self.participants.all()])
+            return f"{ids[0]}_{ids[1]}"
+        return f"group_{self.id}"
+
+class Message(Base):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']

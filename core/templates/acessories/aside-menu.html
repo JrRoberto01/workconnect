@@ -6,21 +6,21 @@
         </a>
         <div class="content">
             <div class="first-group">
-                <div id="notification-box" class="aside-nav-box">
+                <!-- <div id="notification-box" class="aside-nav-box">
                     <i class="fa-solid fa-bell"></i>
-                </div>
+                </div> -->
                 <a class="aside-nav-box" href="{% url 'chat' %}">
                     <i class="fa-solid fa-comment-dots"></i>
                 </a>
                 <a class="aside-nav-box" href="{% url 'group' %}">
                     <i class="fa-solid fa-people-group"></i>
                 </a>
-                <a class="aside-nav-box" href="#">
+                <a class="aside-nav-box" href="{% url 'agenda_view' %}">
                     <i class="fa-solid fa-calendar"></i>
                 </a>
             </div>
             <div class="last-group">
-                <a class="aside-nav-box" href="{% url 'profile' %}">
+                <a class="aside-nav-box" href="{% url 'profile' id=user.id %}">
                     <i class="fa-solid fa-user"></i>
                 </a>
             </div>

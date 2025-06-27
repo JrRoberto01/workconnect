@@ -1,30 +1,205 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="row">
-        <div class="col-lg-5 col-md-12 col-sm-12">
-            <div class="row">
-                <div class="col">
-                    <section id="chat-peoples">
-                        <form>
-                            <input type="text" placeholder="Persquisar em conversas">
-                        </form>
-                        <h3>Conversas</h3>
-                        <div id="chats">
-                            {% include 'acessories/chat.html' %}
-                        </div>
-                    </section>
-                </div>  
-            </div>
-        </div>
-        <div class="col">
-            <div class="row">
-                <section id="chat-content">
-                    {% include 'acessories/chat-conversation.html' %}
+<script>
+    const roomName = "{{ room_name }}";
+    const userEmail = "{{ request.user.email }}";
+</script>
+<div class="row">
+    <div class="col-lg-5 col-md-12 col-sm-12">
+        <div class="row">
+            <div class="col">
+                <section id="chat-peoples">
+                    <form>
+                        <input type="text" placeholder="Persquisar em conversas">
+                    </form>
+                    <button id="create-chat" onclick="openModal()">
+                        <i class="fa-solid fa-plus"></i>
+                        Nova conversa
+                    </button>
+                    <h3>Conversas</h3>
+                    <!--Aqui ficarão todas as conversas privadas já iniciadas e os chats de grupos-->
+                    <div id="chats">
+                        {% include 'acessories/chat.html' %}
+                    </div>
                 </section>
             </div>
         </div>
     </div>
+    <div class="col">
+        <div class="row">
+            <!--Aqui é a caixa de conversa-->
+            <section id="chat-content">
+                {% include 'acessories/chat-conversation.html' %}
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-box" id="chat-add-modal">
+    <div class="content">
+        <h3>Iniciar novo chat</h3>
+        <div class="scrollable-div">
+            {% for membro in membros %}
+            <div class="membro-chat-modal">
+                <div class="profile">
+                    {% if membro.perfil_img %}
+                        <div class="profile-image">
+                            <img src="{{ membro.perfil_img.thumbnail.url }}" alt="Foto de perfil"/>
+                        </div>
+                        {% else %}
+                        <div class="profile-image">
+                            <img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil" />
+                        </div>
+                    {% endif %}
+                    <div class="profile-user-title">
+                        <div class="header-message">
+                            <span><b>{{ membro.get_full_name }}</b></span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'sala_chat' user_id=membro.id %}">Iniciar Chat</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div id="fade-background">
+	<span></span>
+</div>
 <!--End Main Container-->
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (roomName) {
+            const chatSocket = new WebSocket(
+                (window.location.protocol === "https:" ? "wss" : "ws") +
+                "://" + window.location.host +
+                "/ws/chat/" + roomName + "/"
+            );
+
+            const chatForm = document.getElementById("chat-form");
+            const messageInput = document.getElementById("message-input");
+            const contentChat = document.getElementById("content-chat");
+
+            let currentPage = 2;
+            let isLoading = false;
+            let hasMore = {{ has_more|yesno:"true,false" }};
+
+            function createMessageHTML(msg, isSender) {
+                const msgBlock = document.createElement("div");
+                msgBlock.className = isSender ? "message-line-sent" : "message-line-received";
+
+                if (isSender) {
+                    msgBlock.innerHTML = `
+                        <div class="message-content-actions">
+                            <i class="fa-solid fa-reply"></i>
+                            <i class="fa-solid fa-ellipsis more-chat-options"></i>
+                        </div>
+                        <div class="message-content-box">
+                            <p class="message-content">${msg.content}</p>
+                            <span class="message-timer">${msg.timestamp}</span>
+                        </div>
+                    `;
+                } else {
+                    msgBlock.innerHTML = `
+                        <div class="profile">
+                            {% if selected_user.perfil_img %}
+                            <div class="profile-image">
+                                <img src="{{ selected_user.perfil_img.thumbnail.url }}" alt="Foto de perfil">
+                            </div>
+                            {% else %}
+                            <div class="profile-image">
+                                <img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil">
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="message-content-box">
+                            <p class="message-content">${msg.content}</p>
+                            <span class="message-timer">${msg.timestamp}</span>
+                        </div>
+                        <div class="message-content-actions">
+                            <i class="fa-regular fa-heart"></i>
+                            <i class="fa-solid fa-reply"></i>
+                            <i class="fa-solid fa-ellipsis more-chat-options"></i>
+                        </div>
+                    `;
+                }
+                return msgBlock;
+            }
+
+            contentChat.scrollTop = contentChat.scrollHeight;
+
+            contentChat.addEventListener('scroll', function () {
+                if (contentChat.scrollTop === 0 && !isLoading && hasMore) {
+                    isLoading = true;
+
+                    const loadingMsg = document.createElement("p");
+                    loadingMsg.id = "loading-msg";
+                    loadingMsg.textContent = "Carregando mensagens...";
+                    contentChat.prepend(loadingMsg);
+
+                    fetch(`/chat/load-messages/${roomName}/?page=${currentPage}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById("loading-msg").remove();
+
+                            const scrollBefore = contentChat.scrollHeight;
+
+                            data.messages.forEach(msg => {
+                                const isSender = msg.sender === userEmail;
+                                const msgBlock = createMessageHTML(msg, isSender);
+                                contentChat.prepend(msgBlock);
+                            });
+
+                            const scrollAfter = contentChat.scrollHeight;
+                            contentChat.scrollTop = scrollAfter - scrollBefore;
+
+                            currentPage += 1;
+                            hasMore = data.has_more;
+                            isLoading = false;
+                        })
+                        .catch(() => {
+                            const errorMsg = document.getElementById("loading-msg");
+                            if (errorMsg) errorMsg.remove();
+                            isLoading = false;
+                        });
+                }
+            });
+
+            chatForm.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const message = messageInput.value.trim();
+
+                if (message !== "") {
+                    chatSocket.send(JSON.stringify({ "message": message }));
+                    messageInput.value = "";
+                }
+            });
+
+            chatSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                const isSender = data.user === userEmail;
+
+                const msgBlock = createMessageHTML({
+                    content: data.message,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    sender: data.user
+                }, isSender);
+
+                contentChat.appendChild(msgBlock);
+                contentChat.scrollTop = contentChat.scrollHeight;
+            };
+
+            chatSocket.onerror = function (e) {
+                console.error("WebSocket error:", e);
+            };
+
+            chatSocket.onclose = function () {
+                console.warn("WebSocket desconectado.");
+            };
+        }
+    });
+</script>
+
+
 {% endblock %}

@@ -1,7 +1,121 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<button id="logout-btn">sair</button>
+<div class="row" id="group-cover" {% if group.grupo.capa_grupo_img %}style="background: linear-gradient(rgba(27,38,59,1), rgba(27,38,59,0.3)), url('{{ group.capa_grupo_img.url }}');"{% else %}{% endif %}>
+    <div class="col group-detail-title">
+        <h1>{{ user.get_full_name }}</h1>  
+        <span class="post-role"><i class="fa-solid fa-earth-americas"></i> Membro</span>
+    </div>
+    <div class="profile">
+        {% if user.perfil_img %}
+        <div class="profile-image">
+            <img src="{{ user.perfil_img.thumbnail.url }}" alt="Foto de perfil">
+        </div>
+        {% else %}
+        <div class="profile-image">
+            <img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil">
+        </div>
+        {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-8 col-md-12 col-sm-12">
+        <div class="row">
+            <div class="col">
+                <section id="feed-ordenator">
+                    <div>
+                        <h4><b>Feed</b></h4>
+                        <p>Veja publicações relevantes de {{ user.first_name }}</p>
+                    </div>
+                    <!-- <div id="ordenator-list">
+                        <form>
+                            <span>Classificar por</span>
+                            <select name="ordenator" id="ordenator">
+                                <option value="most-relevant">Mais Relevantes</option>
+                                <option value="most-recent" selected>Mais Recentes</option>
+                            </select>
+                        </form>
+                    </div> -->
+                </section>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <section id="posts">
+                    {% for post in posts %}
+                        {% include 'acessories/post.html' %}
+                    {% endfor %}
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="row">
+          <section id="aside-content">
+            <div id="profile-actions">
+                <h3>Sobre</h3>
+                <p id="about-text-user">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+
+                <div class="follow-count">
+                    <p><i class="fa-solid fa-user"></i> {{ usuario.followers.count }} seguidores</p>
+                    <p><i class="fa-solid fa-user"></i> {{ usuario.following.count }} seguindo</p>
+                </div>
+
+                {% if request.user != usuario %}
+                    {% if request.user in usuario.followers.all %}
+                        <a class="no-follow-btn" href="{% url 'unfollow' usuario.id %}"><i class="fa-solid fa-user-minus"></i><p>Deixar de seguir</p></a>
+                    {% else %}
+                        <a class="follow-btn" href="{% url 'follow' usuario.id %}"><i class="fa-solid fa-user-plus"></i><p>Seguir</p></a>
+                    {% endif %}
+                {% endif %}
+
+                {% if request.user == usuario %}
+                    <div class="actions-btn">
+                        <!-- <button>Editar Perfil</button> -->
+                        <button id="logout-btn">Sair</button>
+                    </div>
+                {% endif %}
+            </div>
+            <!-- <hr>
+            <div id="suggest-header">
+                <h3>Sugestão de Grupos Públicos</h3>
+                <i class="fa-solid fa-pen-to-square"></i>
+            </div>
+            <div id="group-suggestions">
+                <div class="group-suggest">
+                    <div class="cover" style="background: url('{% static 'img/cover_test.jpg' %}');"></div>
+                    <div class="content">
+                        <a href="#">
+                            <h5>Grupo Projeto WorkConnect</h5>
+                        </a>
+                        <div>
+                            <form>
+                                <button>Participar</button>
+                            </form>
+                            <span>Público | 15 Membros</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3>Sugestão de Pessoas</h3>
+            <div id="people-suggestions">
+                <div class="people-suggest">
+                    <div class="profile">
+                        <div class="profile-image">
+                            <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
+                        </div>
+                        <div class="profile-user-title">
+                            <span><b><a href="#">{{ user.first_name}} {{ user.last_name}}</a></b></span>
+                            <span class="post-role">Project Management</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+            </div> -->
+        </section>
+        </div>
+    </div>
+</div>
 <!--End Main Container-->
 </div>
 <script src="{% static 'scripts/logout-script.js' %}"></script>

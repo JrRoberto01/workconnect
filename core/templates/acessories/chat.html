@@ -1,22 +1,37 @@
 {% load static %}
-<div class="chat">
-    <div class="profile">
-        <div class="profile-image">
-            <img class="offline" src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
-        </div>
-        <div class="profile-user-title">
-            <div class="header-message">
-                <span><b>{{ user.first_name}} {{ user.last_name}}</b> <i class="fa-solid fa-map-pin fixed-pin"></i></span>
-                <i class="fa-solid fa-ellipsis more-chat-options"></i>
-            </div>
-            <div class="last-message">
-                <div>
-                    <i class="fa-solid fa-check"></i>                                            
-                    <span class="last-message-text">Obrigado</span>
+
+{% for chat in chats %}
+    {% for participante in chat.participants.all %}
+        {% if participante != request.user %}
+        <a href="{% url 'sala_chat' user_id=participante.id %}">
+            <div class="chat">
+                <div class="profile">
+                    {% if participante.perfil_img %}
+                    <div class="profile-image">
+                        <img src="{{ participante.perfil_img.thumbnail.url }}" alt="Foto de perfil" />
+                    </div>
+                    {% else %}
+                    <div class="profile-image">
+                        <img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil" />
+                    </div>
+                    {% endif %}
+                    <div class="profile-user-title">
+                        <div class="header-message">
+                            <span><b>{{ participante.get_full_name}}</b></span>
+                            <i class="fa-solid fa-ellipsis more-chat-options"></i>
+                        </div>
+                        <div class="last-message">
+                            <div>
+                                <i class="fa-solid fa-check"></i>
+                                <span class="last-message-text">{{ chat.ultima_msg_texto|default:" " }}</span>
+                            </div>
+                            <span class="last-message-time">{{ chat.ultima_msg_data|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    </div>
                 </div>
-                <span class="last-message-time">15:00</span>
+                <!-- <hr> -->
             </div>
-        </div>
-    </div>
-    <hr>
-</div>
+        </a>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
