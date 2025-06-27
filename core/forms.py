@@ -2,6 +2,15 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser, Organizacao, User, Grupo, Evento
 from django import forms
 
+TIPO_EVENTO_CHOICES = [
+    ('reuniao', 'Reunião'),
+    ('tarefa', 'Tarefa'),
+    ('evento', 'Evento'),
+    ('treinamento', 'Treinamento'),
+    ('apresentacao', 'Apresentação'),
+    ('outro', 'Outro'),
+]
+
 class CustomUserCreateForm(UserCreationForm):
 	class Meta:
 		model = CustomUser #Definindo o modelo
@@ -71,9 +80,29 @@ class GroupForm(forms.ModelForm):
         return grupo
 
 class EventoForm(forms.ModelForm):
+    tipo = forms.ChoiceField(
+        choices=TIPO_EVENTO_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        required=True,
+        label='Tipo'
+    )
+
+    descricao = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': 2,  # Quantidade de linhas visíveis
+            'class': 'form-control'
+        }),
+        label='Descrição',
+        required=True
+    )
+
     participantes = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.SelectMultiple(attrs={
+            'id': 'select-participantes',
+            'class': 'form-select',
+            'multiple': 'multiple'
+        }),
         required=False,
         label='Participantes'
     )

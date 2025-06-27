@@ -1,15 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseForbidden
-from core.models import Evento
-from core.forms import EventoForm
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from core.models import CustomUser as User
+from django.contrib.auth.decorators import login_required
+
+from ..models import Evento, Organizacao, CustomUser as User
+from ..forms import EventoForm
 
 @login_required
 def agenda_view(request):
-    eventos = Evento.objects.all().order_by('data')
-    users = User.objects.all()
+    organization = Organizacao.objects.filter(deleted_at__isnull=True, membros=request.user).first()
+    eventos = Evento.objects.filter(deleted_at__isnull=True, participantes=request.user).order_by('data')
+    users = User.objects.filter(membros_organizacao__id = organization.id)
 
     if request.method == 'POST':
         evento_id = request.POST.get('evento_id')

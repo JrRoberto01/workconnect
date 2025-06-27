@@ -2,159 +2,229 @@
 {% load static %}
 
 {% block content %}
-<h2>Agenda de Eventos</h2>
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal">
-  Criar Novo Evento
-</button>
-
-<hr>
-
-<ul>
-<!-- Listar eventos -->
-{% for evento in eventos %}
-  <div>
-    <h4>{{ evento.nome }} - {{ evento.data|date:"d/m/Y H:i" }}</h4>
-    <p>Autor: {{ evento.autor.username }}</p>
-    <p>{{ evento.descricao }}</p>
-    <p><strong>Participantes:</strong>
-    {% for participante in evento.participantes.all %}
-      {{ participante.username }}{% if not forloop.last %}, {% endif %}
-    {% empty %}
-      Nenhum participante ainda.
-    {% endfor %}
-  </p>
-    {% if evento.autor == user %}
-    <!-- abrir modal de editar -->
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editarModal{{ evento.id }}">
-      Editar
-    </button>
-
-    <!-- abrir modal de deletar -->
-    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletarModal{{ evento.id }}">
-      Excluir
-    </button>
-    {% endif %}
-  </div>
-
-  <!-- Modal de edicao -->
-<div class="modal fade" id="editarModal{{ evento.id }}" tabindex="-1" aria-labelledby="editarModalLabel{{ evento.id }}" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form method="POST" action="{% url 'agenda_view' %}">
-          {% csrf_token %}
-          <input type="hidden" name="evento_id" value="{{ evento.id }}">
-
-          <div class="modal-header">
-            <h5 class="modal-title" id="editarModalLabel{{ evento.id }}">Editar Evento</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-          </div>
-
-          <div class="modal-body">
-            <!-- Campos  -->
-            <div class="mb-3">
-              <label for="nome{{ evento.id }}" class="form-label">Nome</label>
-              <input type="text" name="nome" id="nome{{ evento.id }}" class="form-control" value="{{ evento.nome }}" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="descricao{{ evento.id }}" class="form-label">Descrição</label>
-              <textarea name="descricao" id="descricao{{ evento.id }}" class="form-control" required>{{ evento.descricao }}</textarea>
-            </div>
-
-            <div class="mb-3">
-              <label for="tipo{{ evento.id }}" class="form-label">Tipo</label>
-              <input type="text" name="tipo" id="tipo{{ evento.id }}" class="form-control" value="{{ evento.tipo }}" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="data{{ evento.id }}" class="form-label">Data e Hora</label>
-              <input type="datetime-local" name="data" id="data{{ evento.id }}" class="form-control" value="{{ evento.data|date:'Y-m-d\TH:i' }}" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="modalidade{{ evento.id }}" class="form-label">Modalidade</label>
-              <select name="modalidade" id="modalidade{{ evento.id }}" class="form-select" required>
-                <option value="presencial" {% if evento.modalidade == 'presencial' %}selected{% endif %}>Presencial</option>
-                <option value="online" {% if evento.modalidade == 'online' %}selected{% endif %}>Online</option>
-                <option value="hibrido" {% if evento.modalidade == 'hibrido' %}selected{% endif %}>Híbrido</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label for="link{{ evento.id }}" class="form-label">Link</label>
-              <input type="url" name="link" id="link{{ evento.id }}" class="form-control" value="{{ evento.link }}">
-            </div>
-          </div>
-          
-          <div class="mb-3">
-                <label for="participantes{{ evento.id }}">Participantes</label>
-                {% for user in users %}
-                  <div>
-                    <input type="checkbox" name="participantes" value="{{ user.id }}"
-                      {% if user in evento.participantes.all %}checked{% endif %}>
-                    {{ user.username }}
-                  </div>
-                {% endfor %}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Salvar alterações</button>
-          </div>
-          <div class="mb-3">
-        </form>
-      </div>
-    </div>
-  </div>
-
+<div class="row">
+	<div class="col-lg-4 col-md-6 col-sm-12">
+		<div class="row">
+			<div class="col">
+				<section id="event-calendar">
+					<h3>Calendário</h3>
+					<div class="calendar-container">
+						<div class="calendar-header">
+							<button onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+							<h2 id="month-year"></h2>
+							<button onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+						</div>
+						<div class="calendar-grid" id="calendar-grid"></div>
+					</div>
+					<hr>
+					<button type="button" class="add-new-event" data-bs-target="#createEventModal" onclick="openModal()"><i class="fa-solid fa-plus"></i> Criar Novo Evento</button>
+				</section>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="row">
+			<div class="col">
+				<section id="events-list">
+					<div class="header">
+						<h4>Eventos e Tarefas</h4>
+					</div>
+					<div class="events">
+						{% for evento in eventos %}
+						<div class="event">
+							<div class="event-info-basic">
+								<p class="event-title">{{ evento.nome }}</p>
+								<p>{{ evento.data }}</p>
+							</div>
+							{% if evento.autor == user %}
+							<div class="event-options">
+								<button
+									class="open-edit-modal"
+									data-bs-target="#editarModal"
+									data-id="{{ evento.id }}"
+									data-nome="{{ evento.nome }}"
+									data-descricao="{{ evento.descricao }}"
+									data-tipo="{{ evento.tipo }}"
+									data-data="{{ evento.data|date:'Y-m-d\\TH:i' }}"
+									data-modalidade="{{ evento.modalidade }}"
+									data-link="{{ evento.link }}"
+									data-participantes="{{ evento.participantes.all|join:',' }}">
+										<i class="fa-solid fa-pencil"></i>
+								</button>
+								
+								<button 
+									data-bs-target="#deletarModal"
+									data-id="{{ evento.id }}"
+  									data-nome="{{ evento.nome }}"
+									class="exclude-btn" onclick="openDeleteEventModal()">
+										<i class="fa-solid fa-trash"></i>
+									</button>
+							</div>
+							{% endif %}
+						</div>
+						{% endfor %}
+					</div>
+				</section>
+			</div>
+		</div>
+	</div>
 </div>
-<!-- confirmação de deletar -->
-<div class="modal fade" id="deletarModal{{ evento.id }}" tabindex="-1" aria-labelledby="deletarModalLabel{{ evento.id }}" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'deletar_evento' evento.id %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title" id="deletarModalLabel{{ evento.id }}">Confirmar Exclusão</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          Tem certeza que deseja excluir o evento "<strong>{{ evento.nome }}</strong>"?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-danger">Excluir</button>
-        </div>
-      </form>
-    </div>
-  </div>
+
+<!-- Modal Dinâmico de Edição -->
+<div class="modal fade" id="editarModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="POST" action="{% url 'agenda_view' %}">
+				{% csrf_token %}
+				<input type="hidden" name="evento_id" id="edit-evento-id">
+
+				<div class="modal-header">
+					<h5 class="modal-title">Editar Evento</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+				</div>
+
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">Nome do Evento</label>
+						<input type="text" name="nome" id="edit-nome" class="form-control" required>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Descrição do Evento</label>
+						<textarea name="descricao" id="edit-descricao" class="form-control" required></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Tipo de Evento</label>
+						<select name="tipo" id="edit-tipo" class="form-control" required>
+							<option value="Reunião" selected>Reunião</option>
+							<option value="Tarefa">Tarefa</option>
+							<option value="Outro">Outro</option>
+						</select>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Data e Hora do Evento</label>
+						<input type="datetime-local" name="data" id="edit-data" class="form-control" required>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Modalidade do Evento</label>
+						<select name="modalidade" id="edit-modalidade" class="form-select" required>
+							<option value="presencial">Presencial</option>
+							<option value="online">Online</option>
+							<option value="hibrido">Híbrido</option>
+						</select>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Link do Evento</label>
+						<input type="url" name="link" id="edit-link" class="form-control">
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Salvar alterações</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
-{% endfor %}
 
-</ul>
-
-<!-- Modal -->
-<div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <form method="post">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">Criar Evento</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          {{ form.as_p }}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Salvar Evento</button>
-        </div>
-      </form>
-    </div>
-  </div>
+<!-- Modal Dinâmico de Exclusão -->
+<div class="modal-box" id="deletarModal">
+	<div class="content">
+		<h3>Excluir Evento</h3>
+		<form method="POST" id="delete-form">
+			{% csrf_token %}
+			<div class="modal-body">
+				Tem certeza que deseja excluir o evento <strong id="delete-event-name"></strong>?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+				<button type="submit" class="btn btn-danger">Excluir</button>
+			</div>
+		</form>
+		</div>
 </div>
 
 
+<!-- <div class="modal fade" id="deletarModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="POST" id="delete-form">
+				{% csrf_token %}
+				<div class="modal-header">
+					<h5 class="modal-title">Confirmar Exclusão</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+				</div>
+				<div class="modal-body">
+					Tem certeza que deseja excluir o evento <strong id="delete-event-name"></strong>?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+					<button type="submit" class="btn btn-danger">Excluir</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div> -->
 
+
+<!-- Modal Criação -->
+<div class="modal-box" id="createEventModal">
+	<div class="content">
+        <h3>Criar Evento</h3>
+		<form method="post">
+			{% csrf_token %}
+			<div class="mb-3">
+				<label>Nome</label>
+				{{ form.nome }}
+			</div>
+		
+			<div class="mb-3">
+				<label>Descrição</label>
+				{{ form.descricao }}
+			</div>
+		
+			<div class="mb-3">
+				<label>Tipo</label>
+				{{ form.tipo }}
+			</div>
+		
+			<div class="mb-3">
+				<label>Data</label>
+				{{ form.data }}
+			</div>
+		
+			<div class="mb-3">
+				<label>Modalidade</label>
+				{{ form.modalidade }}
+			</div>
+		
+			<div class="mb-3">
+				<label>Link</label>
+				{{ form.link }}
+			</div>
+		
+			<div class="mb-3">
+				<label for="select-participantes">Participantes</label>
+				{{ form.participantes }}
+				<div id="selected-users" class="mt-2"></div>
+			</div>
+		
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+				<button type="submit" class="btn btn-primary">Salvar Evento</button>
+			</div>
+		</form>
+	</div>
+</div>
+<div id="fade-background">
+	<span></span>
+</div>
+
+<script src="{% static 'scripts/modal-event-script.js' %}"></script>
+<script src="{% static 'scripts/calendar-script.js' %}"></script>
 {% endblock %}
