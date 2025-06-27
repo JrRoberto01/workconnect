@@ -9,14 +9,14 @@ class GroupView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect('login_user')  # Redireciona se o usuário não estiver logado
+            return redirect('login_user')
 
         if not Organizacao.objects.filter(deleted_at__isnull=True, membros=request.user).exists():
             return redirect('create-organization')
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         organization = Organizacao.objects.filter(deleted_at__isnull=True, membros=request.user).first()
         groups = Grupo.objects.filter(deleted_at__isnull=True, membros=request.user, organizacao=organization)
         add_form = GroupForm()
@@ -26,10 +26,9 @@ class GroupView(TemplateView):
             'groups': groups,
             'add_form': add_form,
         }
+        return render(request, self.template_name, context)
 
-        return render(request, 'groups.html', context)
-
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         form = GroupForm(request.POST, request.FILES)
 
         if form.is_valid():
@@ -42,10 +41,9 @@ class GroupView(TemplateView):
         context = {
             'organization': organization,
             'groups': groups,
-            'form': form,  # Retorna o formulário com erros para o template
+            'add_form': form,
         }
-
-        return render(request, 'groups.html', context)
+        return render(request, self.template_name, context)
 
 class GroupDetailView(TemplateView):
     template_name = "groups.html"

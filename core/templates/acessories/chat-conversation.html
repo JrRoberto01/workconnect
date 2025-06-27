@@ -25,10 +25,10 @@
 	{% for msg in messages %} {% if msg.sender == request.user %}
 	<!--Mensagem do usuário rementente-->
 	<div class="message-line-sent">
-		<div class="message-content-actions">
+		<!-- <div class="message-content-actions">
 			<i class="fa-solid fa-reply"></i>
 			<i class="fa-solid fa-ellipsis more-chat-options"></i>
-		</div>
+		</div> -->
 		<div class="message-content-box">
 			<p class="message-content">{{ msg.content }}</p>
 			<span class="message-timer">{{ msg.timestamp|time:"H:i" }}</span>
@@ -52,11 +52,11 @@
 			<p class="message-content">{{ msg.content }}</p>
 			<span class="message-timer">{{ msg.timestamp|time:"H:i" }}</span>
 		</div>
-		<div class="message-content-actions">
+		<!-- <div class="message-content-actions">
 			<i class="fa-regular fa-heart"></i>
 			<i class="fa-solid fa-reply"></i>
 			<i class="fa-solid fa-ellipsis more-chat-options"></i>
-		</div>
+		</div> -->
 	</div>
 	{% endif %} {% empty %}
 	<!--Mensagem padrão para chats sem histórico-->
@@ -78,14 +78,14 @@
 	</div>
 
 	<form id="chat-form">
-		<input type="text" id="message-input" placeholder="Fazer Comentário" />
+		<input type="text" id="message-input" placeholder="Enviar Mensagem" />
 		<div class="extras">
-			<div id="file-toggle">
+			<!-- <div id="file-toggle">
 				<i class="fa-regular fa-file"></i>
 			</div>
 			<div id="emoji-toggle">
 				<i class="fa-solid fa-face-smile"></i>
-			</div>
+			</div> -->
 			<button type="submit" id="send-button">
 				<i class="fa-solid fa-paper-plane"></i>
 			</button>

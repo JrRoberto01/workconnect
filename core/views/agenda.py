@@ -25,7 +25,7 @@ class AgendaView(TemplateView):
         request = self.request
 
         organization = Organizacao.objects.filter(deleted_at__isnull=True, membros=request.user).first()
-        eventos = Evento.objects.filter(deleted_at__isnull=True, participantes=request.user, autor=request.user).order_by('data')
+        eventos = Evento.objects.filter(deleted_at__isnull=True, participantes=request.user).order_by('data')
 
         print(eventos)
         if organization:

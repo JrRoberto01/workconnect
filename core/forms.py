@@ -13,9 +13,9 @@ TIPO_EVENTO_CHOICES = [
 
 class CustomUserCreateForm(UserCreationForm):
 	class Meta:
-		model = CustomUser #Definindo o modelo
-		fields = {'first_name', 'last_name'} #Devemos passar o que foi exatamente descrito no 'REQUIRED_FIELDS' presente no arquivo models do custom
-		labels = {'username': 'Username/E-mail'} #Passando label para o campo 'username'
+		model = CustomUser
+		fields = {'first_name', 'last_name'}
+		labels = {'username': 'Username/E-mail'}
 
 	def save(self, commit=True):
 		user = super().save(commit=False)
@@ -27,7 +27,7 @@ class CustomUserCreateForm(UserCreationForm):
 
 class CustomUserChangeForm(UserChangeForm):
 	class Meta:
-		model = CustomUser #Definindo o modelo
+		model = CustomUser
 		fields = {'first_name', 'last_name'} #Devemos passar o que foi exatamente descrito no 'REQUIRED_FIELDS' presente no arquivo models do custom
 
 
@@ -48,7 +48,6 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Grupo
         fields = ['nome', 'descricao', 'membros', 'grupo_img', 'capa_grupo_img', 'tipo']
-
         labels = {
             'nome': 'Nome do Grupo',
             'descricao': 'Descrição',
@@ -57,7 +56,6 @@ class GroupForm(forms.ModelForm):
             'capa_grupo_img': 'Imagem do Capa do Grupo',
             'tipo': 'Tipo de Grupo',
         }
-
         widgets = {
             'descricao': forms.Textarea(attrs={'placeholder': 'Descreva o grupo', 'rows': 2}),
         }
@@ -67,7 +65,7 @@ class GroupForm(forms.ModelForm):
             deleted_at__isnull=True, membros=user
         ).first()
 
-        grupo = super().save(commit=False)  # Não salva ainda
+        grupo = super().save(commit=False)
 
         grupo.admin = user
         if organization:
@@ -75,13 +73,14 @@ class GroupForm(forms.ModelForm):
 
         if commit:
             grupo.save()
+            self.save_m2m()
             grupo.membros.add(user)
 
         return grupo
 
 class EventoForm(forms.ModelForm):
     tipo = forms.ChoiceField(
-        choices=TIPO_EVENTO_CHOICES, # Corrigido para usar TIPO_EVENTO_CHOICES definido neste arquivo
+        choices=TIPO_EVENTO_CHOICES,
         widget=forms.Select(attrs={'class': 'form-select'}),
         required=True,
         label='Tipo'

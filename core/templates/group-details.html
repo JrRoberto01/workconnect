@@ -25,7 +25,7 @@
                         <h4><b>Feed</b></h4>
                         <p>Veja publicações relevantes do grupo {{ group.nome }}</p>
                     </div>
-                    <div id="ordenator-list">
+                    <!-- <div id="ordenator-list">
                         <form>
                             <span>Classificar por</span>
                             <select name="ordenator" id="ordenator">
@@ -33,7 +33,7 @@
                                 <option value="most-recent" selected>Mais Recentes</option>
                             </select>
                         </form>
-                    </div>
+                    </div> -->
                 </section>
             </div>
         </div>
@@ -41,7 +41,7 @@
             <div class="col">
                 <section id="posts">
                     {% for post in posts %}
-                        {% include 'acessories/post.html' %}
+                        {% include 'acessories/post-group.html' %}
                     {% endfor %}
                 </section>
             </div>
@@ -59,16 +59,22 @@
                 <div id="people-suggestions">
                     <div class="people-suggest">
                         <div class="profile">
-                            <div class="profile-image">
-                                <img src="{% static 'img/agostinho.jpeg' %}" alt="Foto de perfil">
-                            </div>
+                                {% if member.customuser.perfil_img %}
+                                    <div class="profile-image">
+                                        <img src="{{ member.customuser.perfil_img.thumbnail.url }}" alt="Foto de perfil"/>
+                                    </div>
+                                {% else %}
+                                    <div class="profile-image">
+                                        <img src="{% static 'img/no-image-user.png' %}" alt="Foto de perfil" />
+                                    </div>
+                                {% endif %}
                             <div class="profile-user-title">
-                                <span><b><a href="#">{{ member.customuser.get_full_name}}</a></b></span>
+                                <span><b><a href="{% url 'profile' id=member.customuser.id %}">{{ member.customuser.get_full_name}}</a></b></span>
                                 <span class="post-role">Project Management</span>
                             </div>
                         </div>
                         {% if member.customuser.id != user.id %}
-                        <i class="fa-solid fa-user-plus"></i>
+                        <!-- <i class="fa-solid fa-user-plus"></i> -->
                         {% endif %}
                     </div>
                 </div>
@@ -89,7 +95,7 @@
                 </div>
                 <div class="profile-user-title">
                     <span><b><a href="#">{{ user.first_name}} {{ user.last_name}}</a></b> <i class="fa-solid fa-right-long"></i> <a href="{% url 'group-detail' id=group.id %}"><span class="post-group-details">{{ group.nome }}</span></a></span>
-                    <span class="post-role">Project Management</span>
+                    <!-- <span class="post-role">Project Management</span> -->
                 </div>
             </div>
             <div class="header-options">
